@@ -1,0 +1,33 @@
+main: pdf.anime.Main
+name: FastSellCMI
+version: '1.0'
+description: CMI extension that allows fast selling
+load: POSTWORLD
+author: Anime.pdf
+website: spigotmc.org
+prefix: FastSell
+depend:
+    - CMI
+    - Vault
+api-version: 1.16
+commands:
+    fastsell:
+        description: Open menu to sell items
+        aliases:
+            - fsell
+        permission: fastsell.sell
+        permission-message: You do not have permission!
+        usage: /fastsell
+permissions:
+    fastsell.sell:
+        description: Allows fastsell command
+        default: true
+    fastsell.reload:
+        description: Allows to reload fastsell config
+        default: op
+    fastsell.*:
+        description: Wildcard permission
+        default: op
+        children:
+            fastsell.sell: true
+            fastsell.reload: true
