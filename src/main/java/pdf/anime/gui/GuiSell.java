@@ -63,7 +63,7 @@ public class GuiSell implements InventoryHolder {
                 continue;
             }
             WorthItem worth = CMI.getInstance().getWorthManager().getWorth(item);
-            if (worth != null || worth.getSellPrice() < 1){
+            if (worth == null || worth.getSellPrice() < 1){
                 out.add(item);
             }
         }
