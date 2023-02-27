@@ -20,6 +20,7 @@ import static com.Zrips.CMI.Modules.Economy.Economy.format;
 
 public class GuiSell implements InventoryHolder {
     private final Inventory inv;
+    public boolean sold = false;
     public GuiSell() {
         inv = Bukkit.createInventory(this, 9*6, Main.GetColorStringConfig("window-title"));
         initializeItems();

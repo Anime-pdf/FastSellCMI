@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import pdf.anime.Main;
@@ -35,6 +36,7 @@ public class GuiEvents implements Listener {
                 for (ItemStack item : ((GuiSell) e.getClickedInventory().getHolder()).ReturnUnsoldItems()) {
                     player.getInventory().addItem(item);
                 }
+                ((GuiSell) e.getClickedInventory().getHolder()).sold = true;
                 player.closeInventory();
                 if(price > 0)
                 {
@@ -52,6 +54,17 @@ public class GuiEvents implements Listener {
             }
             if (currItem.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "isBorder"), PersistentDataType.INTEGER)) {
                 e.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent e)
+    {
+        if(e.getInventory().getHolder() instanceof GuiSell && !(((GuiSell) e.getInventory().getHolder()).sold))
+        {
+            for (ItemStack item : ((GuiSell) e.getInventory().getHolder()).ReturnItems()) {
+                e.getPlayer().getInventory().addItem(item);
             }
         }
     }
