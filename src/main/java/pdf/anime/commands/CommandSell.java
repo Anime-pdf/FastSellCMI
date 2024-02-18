@@ -1,27 +1,43 @@
 package pdf.anime.commands;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pdf.anime.Main;
+import org.jetbrains.annotations.NotNull;
+import pdf.anime.config.Config;
 import pdf.anime.gui.GuiSell;
+import pdf.anime.utils.NamespacedKeysContainer;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CommandSell implements CommandExecutor {
 
+    Config config;
+    NamespacedKeysContainer container;
+
+    public CommandSell(Config config, NamespacedKeysContainer container) {
+        this.config = config;
+        this.container = container;
+    }
+
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(args.length == 1){
-            if(args[0].equalsIgnoreCase("reload") && sender.hasPermission("fastsell.reload")) {
-                Main.getInstance().ReloadConfig();
-                sender.sendMessage(Main.GetColorStringConfig("reload-msg"));
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+
+        if(args[0].equalsIgnoreCase("reload")) {
+            if(!(sender instanceof Player player) || player.hasPermission("fastsell.reload")) {
+                config.reload();
+                sender.sendMessage(config.getAsColorful("reload-msg"));
             }
+            return true;
         }
-        else {
-            if (sender instanceof Player) {
-                ((Player) sender).openInventory(new GuiSell().getInventory());
-            }
+
+
+        if(sender instanceof Player player) {
+            player.openInventory(new GuiSell(config, container).getInventory());
         }
+
         return true;
     }
 }

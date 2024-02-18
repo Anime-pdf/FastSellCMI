@@ -1,8 +1,8 @@
 package pdf.anime.events;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,50 +11,81 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import pdf.anime.Main;
+import pdf.anime.config.Config;
 import pdf.anime.gui.GuiSell;
+import pdf.anime.utils.BukkitRunner;
+import pdf.anime.utils.NamespacedKeysContainer;
 
 import static com.Zrips.CMI.Modules.Economy.Economy.*;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GuiEvents implements Listener {
+    Config config;
+    NamespacedKeysContainer container;
+    BukkitRunner runner;
+
+    public GuiEvents(Config config, NamespacedKeysContainer container, BukkitRunner runner) {
+        this.config = config;
+        this.container = container;
+        this.runner = runner;
+    }
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getClickedInventory() == null) return;
-        if (e.getClickedInventory().getHolder() instanceof GuiSell || e.getView().getTopInventory().getHolder() instanceof GuiSell) {
-            Bukkit.getScheduler().runTask(Main.getInstance(), () -> ((GuiSell) e.getView().getTopInventory().getHolder()).UpdatePrice());
+        if(e.getClickedInventory() == null)
+            return;
 
-            ItemStack currItem = e.getCurrentItem();
-            Player player = (Player) e.getWhoClicked();
+        if (!(e.getClickedInventory().getHolder() instanceof GuiSell) && (e.getView().getTopInventory().getHolder() instanceof GuiSell)) {
+            return;
+        }
 
-            if(currItem == null) return;
+        GuiSell inventory = (GuiSell) e.getView().getTopInventory().getHolder();
+        if(inventory == null)
+            return;
 
-            if (currItem.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "isSell"), PersistentDataType.INTEGER)) {
-                e.setCancelled(true);
+        runner.run(inventory::UpdatePrice);
 
-                Double price = ((GuiSell) e.getClickedInventory().getHolder()).UpdatePrice();
-                for (ItemStack item : ((GuiSell) e.getClickedInventory().getHolder()).ReturnUnsoldItems()) {
-                    player.getInventory().addItem(item);
-                }
-                ((GuiSell) e.getClickedInventory().getHolder()).sold = true;
-                player.closeInventory();
-                if(price > 0)
-                {
-                    depositPlayer(player.getName(), price);
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.config.getString("sell-msg").replace("{total}", format(price))));
-                    player.playSound(player.getLocation(), Sound.valueOf(Main.config.getString("sell-sound")), 1, 1);
-                }
+        ItemStack currItem = e.getCurrentItem();
+        Player player = (Player) e.getWhoClicked();
+
+        if(currItem == null) return;
+
+        if(!currItem.getItemMeta().getPersistentDataContainer().has(container.getKey("isSell"), PersistentDataType.INTEGER))
+            return;
+
+        e.setCancelled(true);
+
+        Double price = inventory.UpdatePrice();
+        for (ItemStack item : inventory.ReturnUnsoldItems()) {
+            player.getInventory().addItem(item);
+        }
+
+        inventory.sold = true;
+        player.closeInventory();
+
+        if(price > 0)
+        {
+            depositPlayer(player.getName(), price);
+            player.sendMessage(
+                    config.getAsColorful(
+                            "sell-msg",
+                            Placeholder.unparsed("total", format(price)
+                            )
+                    )
+            );
+
+            player.playSound(player.getLocation(), Sound.valueOf(config.get("sell-sound")), 1, 1);
+        }
+
+        if (currItem.getItemMeta().getPersistentDataContainer().has(container.getKey("isCancel"), PersistentDataType.INTEGER)) {
+            e.setCancelled(true);
+            for (ItemStack item : inventory.ReturnItems()) {
+                player.getInventory().addItem(item);
             }
-            if (currItem.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "isCancel"), PersistentDataType.INTEGER)) {
-                e.setCancelled(true);
-                for (ItemStack item : ((GuiSell) e.getClickedInventory().getHolder()).ReturnItems()) {
-                    player.getInventory().addItem(item);
-                }
-                player.closeInventory();
-            }
-            if (currItem.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "isBorder"), PersistentDataType.INTEGER)) {
-                e.setCancelled(true);
-            }
+            player.closeInventory();
+        }
+        if (currItem.getItemMeta().getPersistentDataContainer().has(container.getKey("isBorder"), PersistentDataType.INTEGER)) {
+            e.setCancelled(true);
         }
     }
 

@@ -1,15 +1,14 @@
-main: pdf.anime.Main
+main: pdf.anime.FastSellPlugin
 name: FastSellCMI
 version: '1.1'
 description: CMI extension that allows fast selling
 load: POSTWORLD
 author: Anime.pdf
-website: spigotmc.org
 prefix: FastSell
 depend:
     - CMI
     - Vault
-api-version: 1.16
+api-version: 1.19
 commands:
     fastsell:
         description: Open menu to sell items

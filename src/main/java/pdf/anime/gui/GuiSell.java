@@ -2,27 +2,37 @@ package pdf.anime.gui;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Worth.WorthItem;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import pdf.anime.Main;
+import org.jetbrains.annotations.NotNull;
+import pdf.anime.config.Config;
+import pdf.anime.utils.NamespacedKeysContainer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.Zrips.CMI.Modules.Economy.Economy.format;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class GuiSell implements InventoryHolder {
-    private final Inventory inv;
+    final Config config;
+    final NamespacedKeysContainer container;
+    final Inventory inv;
     public boolean sold = false;
-    public GuiSell() {
-        inv = Bukkit.createInventory(this, 9*6, Main.GetColorStringConfig("window-title"));
+
+    public GuiSell(Config config, NamespacedKeysContainer container) {
+        this.config = config;
+        this.container = container;
+        inv = Bukkit.createInventory(this, 9*6, config.getAsColorful("window-title"));
         initializeItems();
     }
 
@@ -30,7 +40,7 @@ public class GuiSell implements InventoryHolder {
     {
         double Price = 0;
         for (ItemStack item : inv.getContents()) {
-            if(item == null || item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "isBorder"), PersistentDataType.INTEGER))
+            if(item == null || item.getItemMeta().getPersistentDataContainer().has(container.getKey("isBorder"), PersistentDataType.INTEGER))
             {
                 continue;
             }
@@ -39,7 +49,14 @@ public class GuiSell implements InventoryHolder {
                 Price += worth.getSellPrice() * item.getAmount();
             }
         }
-        inv.setItem(9*5+4, createGuiItem(Material.END_CRYSTAL, Main.GetColorStringConfig("price-text").replace("{total}", format(Price)), "isBorder"));
+        inv.setItem(9*5+4,
+                createGuiItem(
+                    Material.END_CRYSTAL,
+                    config.getAsColorful("price-text",
+                            Placeholder.unparsed("total", format(Price)
+                            )
+                    ), "isBorder")
+        );
         return Price;
     }
 
@@ -47,7 +64,7 @@ public class GuiSell implements InventoryHolder {
     {
         List<ItemStack> out = new ArrayList<>();
         for (ItemStack item : inv.getContents()) {
-            if(item == null || item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "isBorder"), PersistentDataType.INTEGER))
+            if(item == null || item.getItemMeta().getPersistentDataContainer().has(container.getKey("isBorder"), PersistentDataType.INTEGER))
             {
                 continue;
             }
@@ -59,7 +76,7 @@ public class GuiSell implements InventoryHolder {
     {
         List<ItemStack> out = new ArrayList<>();
         for (ItemStack item : inv.getContents()) {
-            if(item == null || item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "isBorder"), PersistentDataType.INTEGER))
+            if(item == null || item.getItemMeta().getPersistentDataContainer().has(container.getKey("isBorder"), PersistentDataType.INTEGER))
             {
                 continue;
             }
@@ -73,33 +90,33 @@ public class GuiSell implements InventoryHolder {
 
     public void initializeItems() {
         for (int i = 0; i < 9; i++) {
-            inv.setItem(i, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, " ", "isBorder"));
-            inv.setItem(i+9*5, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, " ", "isBorder"));
+            inv.setItem(i, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(" "), "isBorder"));
+            inv.setItem(i+9*5, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(" "), "isBorder"));
         }
         for (int i = 1; i < 5; i++) {
-            inv.setItem(i*9, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, " ", "isBorder"));
-            inv.setItem((i*9)+8, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, " ", "isBorder"));
+            inv.setItem(i*9, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(" "), "isBorder"));
+            inv.setItem((i*9)+8, createGuiItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(" "), "isBorder"));
         }
         for (int i = 0; i < 3; i++) {
-            inv.setItem(9*5+i+1, createGuiItem(Material.GREEN_STAINED_GLASS_PANE, ChatColor.translateAlternateColorCodes('&', Main.GetColorStringConfig("sell-button")), "isBorder", "isSell"));
-            inv.setItem(9*5+i+5, createGuiItem(Material.RED_STAINED_GLASS_PANE, ChatColor.translateAlternateColorCodes('&', Main.GetColorStringConfig("cancel-button")), "isBorder", "isCancel"));
+            inv.setItem(9*5+i+1, createGuiItem(Material.GREEN_STAINED_GLASS_PANE, config.getAsColorful("sell-button"), "isBorder", "isSell"));
+            inv.setItem(9*5+i+5, createGuiItem(Material.RED_STAINED_GLASS_PANE, config.getAsColorful("cancel-button"), "isBorder", "isCancel"));
         }
         UpdatePrice();
     }
 
-    protected ItemStack createGuiItem(final Material material, final String name, final String... keys) {
+    protected ItemStack createGuiItem(final Material material, final Component name, final String... keys) {
         final ItemStack item = new ItemStack(material, 1);
         final ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
+        meta.displayName(name);
         for (String key : keys) {
-            meta.getPersistentDataContainer().set(new NamespacedKey(Main.getInstance(), key), PersistentDataType.INTEGER, 1);
+            meta.getPersistentDataContainer().set(container.getKey(key), PersistentDataType.INTEGER, 1);
         }
         item.setItemMeta(meta);
         return item;
     }
 
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return inv;
     }
 }
