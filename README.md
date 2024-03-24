@@ -1,5 +1,8 @@
 # FastSellCMI
-Spigot Plugin That allows to sell items by CMI's worth rate in just one menu  
+Spigot Plugin That allows to sell items by CMI's worth rate in just one menu 
+
+**Version: Paper, Folia, Purpur and other forks of Paper, 1.18.2+**  
+**Java: 17+**
 
 **Supports minimessages and has configurable menu!**
 
