@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'pdf.anime.fastsellcmi'
-version '2.0'
+ext.projectVersion = '2.0.0'
 
 def targetJavaVersion = 17
 java {
@@ -21,35 +21,29 @@ java {
 compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs << "-parameters"
 }
 
 repositories {
     mavenCentral()
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
-    maven { url 'https://jitpack.io' }
     maven { url 'https://repo.panda-lang.org/releases' }
     maven { url 'https://repo.codemc.io/repository/maven-public/' }
 }
 
 dependencies {
-    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
 
     // CMI
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    implementation files('libs/CMI-API9.6.5.0.jar')
+    compileOnly files('libs/CMI-API9.6.5.0.jar')
 
-    // MiniMessage
-    implementation "net.kyori:adventure-api:4.16.0"
-    implementation "net.kyori:adventure-platform-bukkit:4.3.2"
-    implementation "net.kyori:adventure-text-minimessage:4.16.0"
+    // Config
+    implementation 'org.spongepowered:configurate-core:4.1.2'
+    implementation 'org.spongepowered:configurate-yaml:4.1.2'
 
-    // Config framework
-    compileOnly 'org.spongepowered:configurate-core:4.1.2'
-    compileOnly 'org.spongepowered:configurate-yaml:4.1.2'
-
-    // Commands framework
+    // Commands
     implementation 'dev.rollczi:litecommands-bukkit:3.4.0'
-    implementation 'dev.rollczi:litecommands-adventure:3.2.0'
 
     // NBTAPI
     implementation 'de.tr7zw:item-nbt-api:2.12.2'
@@ -64,8 +58,54 @@ build {
 
 shadowJar {
     relocate 'de.tr7zw.changeme.nbtapi', 'pdf.anime.fastsellcmi.nbtapi'
+    incrementBuildVersion()
 }
 
 test {
     useJUnitPlatform()
+}
+
+def createPropertiesIfNotExist() {
+    def versionPropsFile = file('version.properties')
+    if(!versionPropsFile.exists()) {
+        versionPropsFile.createNewFile()
+        BufferedWriter writer = new BufferedWriter(new FileWriter('version.properties'))
+        writer.write("build=0")
+        writer.close()
+    }
+}
+
+def getBuildVersion() {
+    createPropertiesIfNotExist()
+    def versionPropsFile = file('version.properties')
+    if(versionPropsFile.canRead()) {
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        return versionProps['build'].toInteger()
+    } else {
+        throw new GradleException("Could no read properties")
+    }
+}
+
+def setBuildVersion(buildVersion) {
+    createPropertiesIfNotExist()
+    def versionPropsFile = file('version.properties')
+    if(versionPropsFile.canRead()) {
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        versionProps['build'] = buildVersion.toString()
+        versionProps.store(versionPropsFile.newWriter(), null)
+    } else {
+        throw new GradleException("Could no read properties")
+    }
+}
+
+def incrementBuildVersion() {
+    def buildOutputFolder = file('build/libs')
+    buildOutputFolder.mkdirs()
+    Arrays.asList(buildOutputFolder.listFiles()).forEach(file -> file.delete())
+
+    def code = getBuildVersion() + 1
+    setBuildVersion(code)
+    version projectVersion + "-build" + code
 }

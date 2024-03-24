@@ -31,9 +31,10 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
     transient static private ItemStack PRICE_BUTTON_ITEM;
     transient static private ItemStack WALL_BUTTON_ITEM;
 
-    public Component windowTitle = Component.text("FastSellCMI config reloaded!", NamedTextColor.GREEN);
+    public Component windowTitle = Component.text("Fast sell you items!", NamedTextColor.GREEN);
     public String[] inventoryMap = new String[]{
             "WWWWWWWWW",
+            "W       W",
             "W       W",
             "W       W",
             "W       W",
@@ -43,8 +44,8 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
     public Map<Character, ItemStack> itemMap = new HashMap<>(){{
         put('S', SELL_BUTTON_ITEM);
         put('C', CANCEL_BUTTON_ITEM);
-        put('P', WALL_BUTTON_ITEM);
-        put('W', SELL_BUTTON_ITEM);
+        put('P', PRICE_BUTTON_ITEM);
+        put('W', WALL_BUTTON_ITEM);
     }};
 
     public Map<Character, String> functionalMap = new HashMap<>() {{
@@ -81,7 +82,7 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
             item.editMeta(itemMeta -> {
                 itemMeta.displayName(
                         Component.text("Sell for: ", NamedTextColor.BLUE)
-                                .append(Component.text("<total>", NamedTextColor.RED))
+                                .append(Component.text("{total}", NamedTextColor.RED))
                 );
             });
 

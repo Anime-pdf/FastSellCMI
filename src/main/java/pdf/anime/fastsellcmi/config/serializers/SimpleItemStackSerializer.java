@@ -20,12 +20,8 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
     public SimpleItemStackSerializer() {
@@ -39,7 +35,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 ItemStack item = this.deserializeSimple(simpleItemData);
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
-                    meta.displayName((Component)node.node(new Object[]{"name"}).get(Component.class, Component.text()));
+                    meta.displayName((Component)node.node(new Object[]{"name"}).get(Component.class, Component.empty()));
                     meta.lore(node.node(new Object[]{"lore"}).getList(Component.class, new ArrayList()));
                     if (!node.node(new Object[]{"cmd"}).isNull()) {
                         meta.setCustomModelData(node.node(new Object[]{"cmd"}).getInt());
@@ -98,27 +94,27 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             if (this.isSimple(obj)) {
                 node.set(simpleItemData);
             } else {
-                HashMap<String, Object> rawMap = new HashMap();
+                node = node.node(new Object[]{simpleItemData});
                 ItemMeta meta = obj.getItemMeta();
                 if (meta.hasDisplayName()) {
-                    rawMap.put("name", meta.getDisplayName());
+                    node.node(new Object[]{"name"}).set(meta.displayName());
                 }
 
                 if (meta.hasLore()) {
-                    rawMap.put("lore", meta.getLore());
+                    node.node(new Object[]{"lore"}).setList(Component.class, meta.lore());
                 }
 
                 if (meta.hasCustomModelData()) {
-                    rawMap.put("cmd", meta.getCustomModelData());
+                    node.node(new Object[]{"cmd"}).set(meta.getCustomModelData());
                 }
 
                 if (meta.isUnbreakable()) {
-                    rawMap.put("unbreakable", true);
+                    node.node(new Object[]{"unbreakable"}).set(true);
                 }
 
                 List<String> serializedEnchantment = this.serializeEnchantments(obj);
                 if (serializedEnchantment.size() != 0) {
-                    rawMap.put("enchantments", serializedEnchantment);
+                    node.node(new Object[]{"enchantments"}).setList(String.class, serializedEnchantment);
                 }
 
                 List<String> serializedItemFlag = new ArrayList();
@@ -126,13 +122,9 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                     serializedItemFlag.add(itemFlag.name().toLowerCase());
                 });
                 if (serializedItemFlag.size() > 0) {
-                    rawMap.put("item_flags", serializedItemFlag);
+                    node.node(new Object[]{"item_flags"}).setList(String.class, serializedItemFlag);
                 }
 
-                HashMap<String, Object> resultRaw = new HashMap();
-                resultRaw.put(simpleItemData, rawMap);
-                node.raw(resultRaw);
-                node = node.node(new Object[]{simpleItemData});
                 this.serializeDurability(obj, node.node(new Object[]{"durability"}));
                 this.serializePotion(obj, node.node(new Object[]{"potion"}));
                 this.serializeFirework(obj, node.node(new Object[]{"firework"}));
@@ -276,11 +268,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         if (stripped.length != 2) {
             throw new RuntimeException("must be 2 parameters {material count}");
         } else {
-            ItemStack item = new ItemStack(Material.getMaterial(stripped[0].toUpperCase()));
-            item.setAmount(Integer.parseInt(stripped[1]));
-            applyTextViewColor('&', item);
-
-            return item;
+            return new ItemStack(Material.getMaterial(stripped[0].toUpperCase()), Integer.parseInt(stripped[1]));
         }
     }
 
@@ -295,44 +283,5 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
 
     private boolean isEnchantmentBook(ItemStack itemStack) {
         return itemStack.getItemMeta() != null && itemStack.getItemMeta() instanceof EnchantmentStorageMeta;
-    }
-
-    private void applyTextViewColor(char replaceChar, ItemStack item) {
-        this.updateTextView((component) -> {
-            return component.replaceText((builder) -> {
-                builder.matchLiteral(String.valueOf(replaceChar)).replacement(String.valueOf('§'));
-            });
-        }, item);
-    }
-    private void updateTextView(Function<Component, Component> function, ItemStack item) {
-        if (this.hasItemMeta(item)) {
-            if (item.getItemMeta().hasLore()) {
-                this.updateLore(function, item);
-            }
-
-            if (item.getItemMeta().hasDisplayName()) {
-                this.changeMeta((meta) -> {
-                    meta.displayName((Component)function.apply(meta.displayName()));
-                }, item);
-            }
-        }
-    }
-    private void changeMeta(Consumer<ItemMeta> metaEdit, ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            metaEdit.accept(meta);
-            item.setItemMeta(meta);
-        }
-    }
-    private void updateLore(Function<Component, Component> update, ItemStack item) {
-        this.changeMeta((meta) -> {
-            if (meta.hasLore()) {
-                meta.lore((List)meta.lore().stream().map(update).collect(Collectors.toList()));
-            }
-
-        }, item);
-    }
-    private boolean hasItemMeta(ItemStack item) {
-        return item.getItemMeta() != null;
     }
 }

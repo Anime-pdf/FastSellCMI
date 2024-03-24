@@ -16,23 +16,23 @@ import java.io.File;
 @ConfigSerializable
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LanguageConfig extends ConfigHolder<LanguageConfig> {
+public class GeneralConfig extends ConfigHolder<GeneralConfig> {
     public Component configReloaded = Component.text("FastSellCMI config reloaded!", NamedTextColor.GREEN);
     public Component missingPermission = Component.text("Not enough permissions!", NamedTextColor.RED);
 
-    public Component sellMessage = Component.text("FastSellCMI config reloaded!", NamedTextColor.GREEN);
-    public Component cancelMessage = Component.text("FastSellCMI config reloaded!", NamedTextColor.GREEN);
+    public Component sellMessage = Component.text("Items sold! You got {total}", NamedTextColor.GREEN);
+    public Component cancelMessage = Component.text("You canceled selling!", NamedTextColor.RED);
 
     public String sellSound = Sound.ENTITY_VILLAGER_TRADE.name();
     public String cancelSound = Sound.ENTITY_VILLAGER_NO.name();
 
-    public LanguageConfig(File baseFilePath) {
+    public GeneralConfig(File baseFilePath) {
         super(baseFilePath, TypeSerializerCollection.builder()
                 .register(Component.class, new ComponentSerializer())
                 .build());
     }
 
-    public LanguageConfig() {
+    public GeneralConfig() {
         this(null);
     }
 }

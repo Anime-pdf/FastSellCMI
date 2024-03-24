@@ -1,8 +1,6 @@
 package pdf.anime.fastsellcmi;
 
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.adventure.LiteAdventureExtension;
-import dev.rollczi.litecommands.bukkit.LiteBukkitMessages;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import pdf.anime.fastsellcmi.commands.FastSellCommand;
 import pdf.anime.fastsellcmi.config.ConfigContainer;
+import pdf.anime.fastsellcmi.listeners.FastSellMenuListener;
+import pdf.anime.fastsellcmi.utils.BukkitRunner;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -26,19 +26,12 @@ public class FastSellPlugin extends JavaPlugin {
         configContainer = new ConfigContainer(getDataFolder());
         configContainer.loadConfigs();
 
+        getServer().getPluginManager().registerEvents(new FastSellMenuListener(configContainer, new BukkitRunner(this)), this);
+
         this.liteCommands = LiteCommandsBukkit.builder("FastSellCMI", this)
-                .extension(new LiteAdventureExtension<>(), configuration -> configuration
-                        .miniMessage(true)
-                        .legacyColor(true)
-                        .colorizeArgument(true)
-                        .serializer(this.miniMessage)
-                )
                 .commands(
                         new FastSellCommand(configContainer)
                 )
-                .message(LiteBukkitMessages.MISSING_PERMISSIONS, input -> MiniMessage.miniMessage().serialize(configContainer.getLanguageConfig().getMissingPermission()))
-                .message(LiteBukkitMessages.PLAYER_ONLY, "<red>Only player can execute this command!")
-
                 .build();
     }
 

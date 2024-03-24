@@ -1,7 +1,7 @@
 package pdf.anime.fastsellcmi.listeners;
 
+import com.Zrips.CMI.CMI;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -15,7 +15,8 @@ import pdf.anime.fastsellcmi.config.SellMenuConfig;
 import pdf.anime.fastsellcmi.menus.FastSellMenu;
 import pdf.anime.fastsellcmi.utils.BukkitRunner;
 
-import static com.Zrips.CMI.Modules.Economy.Economy.depositPlayer;
+import java.util.regex.Pattern;
+
 import static com.Zrips.CMI.Modules.Economy.Economy.format;
 
 public class FastSellMenuListener implements Listener {
@@ -44,10 +45,11 @@ public class FastSellMenuListener implements Listener {
                 return;
             }
 
-            e.setCancelled(true);
-
             String type = nbtItem.getString("button-type");
-
+            if (type.equals(SellMenuConfig.WALL_BUTTON_TYPE) || type.equals(SellMenuConfig.PRICE_BUTTON_TYPE)) {
+                e.setCancelled(true);
+                return;
+            }
             if (type.equals(SellMenuConfig.SELL_BUTTON_TYPE)) {
                 e.setCancelled(true);
 
@@ -59,22 +61,21 @@ public class FastSellMenuListener implements Listener {
                 player.closeInventory();
                 if(price > 0)
                 {
-                    depositPlayer(player.getName(), price);
-                    player.sendMessage(configContainer.getLanguageConfig().sellMessage.replaceText(TextReplacementConfig.builder().match("<total>").replacement(Component.text(format(price))).build()));
+                    CMI.getInstance().getPlayerManager().getUser(player).deposit(price);
+                    CMI.getInstance().save(player);
+                    player.sendMessage(configContainer.getLanguageConfig().sellMessage.replaceText(TextReplacementConfig.builder().match(Pattern.compile("\\{total\\}")).replacement(format(price)).build()));
                     player.playSound(player.getLocation(), Sound.valueOf(configContainer.getLanguageConfig().sellSound), 1, 1);
                 }
             }
             if (type.equals(SellMenuConfig.CANCEL_BUTTON_TYPE)) {
                 e.setCancelled(true);
+
                 for (ItemStack item : menu.getUnsellableItems()) {
                     player.getInventory().addItem(item);
                 }
                 player.closeInventory();
                 player.sendMessage(configContainer.getLanguageConfig().cancelMessage);
                 player.playSound(player.getLocation(), Sound.valueOf(configContainer.getLanguageConfig().cancelSound), 1, 1);
-            }
-            if (type.equals(SellMenuConfig.WALL_BUTTON_TYPE) || type.equals(SellMenuConfig.PRICE_BUTTON_TYPE)) {
-                e.setCancelled(true);
             }
         }
     }
@@ -84,7 +85,7 @@ public class FastSellMenuListener implements Listener {
     {
         if(e.getInventory().getHolder() instanceof FastSellMenu menu && !menu.isSold())
         {
-            for (ItemStack item : menu.getUnsellableItems()) {
+            for (ItemStack item : menu.getItems()) {
                 e.getPlayer().getInventory().addItem(item);
             }
         }

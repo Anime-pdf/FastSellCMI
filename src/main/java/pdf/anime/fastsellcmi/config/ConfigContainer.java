@@ -8,7 +8,7 @@ import java.io.File;
 public class ConfigContainer {
     private final File dataFolder;
 
-    private LanguageConfig languageConfig;
+    private GeneralConfig languageConfig;
     private SellMenuConfig sellMenuConfig;
 
     public ConfigContainer(File dataFolder) {
@@ -16,7 +16,7 @@ public class ConfigContainer {
     }
 
     public void loadConfigs() {
-        languageConfig = new LanguageConfig(new File(dataFolder, "lang.yml")).loadOrCreateConfig();
+        languageConfig = new GeneralConfig(new File(dataFolder, "config.yml")).loadOrCreateConfig();
         sellMenuConfig = new SellMenuConfig(new File(dataFolder, "sell_menu.yml")).loadOrCreateConfig();
     }
 

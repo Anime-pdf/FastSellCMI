@@ -11,9 +11,11 @@ import lombok.experimental.FieldDefaults;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import pdf.anime.fastsellcmi.config.ConfigContainer;
 import pdf.anime.fastsellcmi.config.SellMenuConfig;
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static com.Zrips.CMI.Modules.Economy.Economy.format;
 
@@ -55,6 +58,10 @@ public class FastSellMenu implements InventoryHolder {
             for (int j = 0; j < charString.length; j++) {
                 char code = charString[j];
                 ItemStack itemStack = itemMap.get(code);
+                if(itemStack == null || itemStack.getAmount() == 0 || itemStack.getType() == Material.AIR) {
+                    continue;
+                }
+
                 NBT.modify(itemStack, nbt -> {
                     nbt.setString("button-type", functionalMap.get(code));
                 });
@@ -78,18 +85,22 @@ public class FastSellMenu implements InventoryHolder {
                 return;
             }
 
-            itemMeta.displayName(
-                configContainer.getSellMenuConfig().itemMap.get(chr).displayName()
-                        .replaceText(TextReplacementConfig.builder()
-                                .match("<total>")
-                                .replacement(Component.text(format(totalPrice)))
-                                .build()
-                        )
-            );
+            ItemMeta meta = configContainer.getSellMenuConfig().itemMap.get(chr).getItemMeta();
+
+            if(meta == null) {
+                return;
+            }
+            Component oldName = meta.displayName();
+            if(oldName == null) {
+                return;
+            }
+
+            itemMeta.displayName(oldName.replaceText(TextReplacementConfig.builder().match(Pattern.compile("\\{total\\}")).replacement(format(totalPrice)).build()).asComponent());
         }));
     }
 
     public void updateTotalPrice(boolean updateButton) {
+        totalPrice = 0f;
         getItems().forEach(itemStack -> {
             WorthItem worth = CMI.getInstance().getWorthManager().getWorth(itemStack);
             if (worth != null && worth.getSellPrice() > 0){

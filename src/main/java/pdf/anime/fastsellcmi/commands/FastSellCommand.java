@@ -3,7 +3,6 @@ package pdf.anime.fastsellcmi.commands;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pdf.anime.fastsellcmi.config.ConfigContainer;
@@ -18,15 +17,23 @@ public class FastSellCommand {
     }
 
     @Execute(name = "reload")
-    @Permission("fastsell.reload")
     public void reload(@Context CommandSender sender) {
+        if(!sender.hasPermission("fastsell.reload")) {
+            sender.sendMessage(configContainer.getLanguageConfig().missingPermission);
+            return;
+        }
+
         configContainer.reloadConfigs();
         sender.sendMessage(configContainer.getLanguageConfig().configReloaded);
     }
 
-    @Execute()
-    @Permission("fastsell.sell")
+    @Execute
     public void sell(@Context CommandSender sender) {
+        if(!sender.hasPermission("fastsell.sell")) {
+            sender.sendMessage(configContainer.getLanguageConfig().missingPermission);
+            return;
+        }
+
         if (sender instanceof Player player) {
             player.openInventory(new FastSellMenu(configContainer).getInventory());
         }
