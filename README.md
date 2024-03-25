@@ -1,3 +1,9 @@
+[Modrinth](https://modrinth.com/plugin/fastsellcmi)
+|
+[SpigotMC](https://www.spigotmc.org/resources/fastsellcmi.108261/)
+|
+[Discord](https://discord.gg/nJr7vPjzNy)
+
 # FastSellCMI
 Spigot Plugin That allows to sell items by CMI's worth rate in just one menu 
 
@@ -5,6 +11,14 @@ Spigot Plugin That allows to sell items by CMI's worth rate in just one menu
 **Java: 17+**
 
 **Supports minimessages and has configurable menu!**
+
+<p align="center">
+    <a href="https://discord.gg/4dH2zwTmyX">
+        <img src="https://i.imgur.com/JgDt1Fl.png" width="300">
+    </a>
+    <br/>
+    <i>Please join the Discord if you have questions!</i>
+</p>
 
 ## Commands:
 * `/fastsell`
