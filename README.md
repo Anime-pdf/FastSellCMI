@@ -2,10 +2,12 @@
 |
 [SpigotMC](https://www.spigotmc.org/resources/fastsellcmi.108261/)
 |
+[CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/fastsellcmi)
+|
 [Discord](https://discord.gg/nJr7vPjzNy)
 
 # FastSellCMI
-Spigot Plugin That allows to sell items by CMI's worth rate in just one menu 
+PaperMC Plugin That allows to sell items by CMI's worth rate in just one menu 
 <p align="center">
     <img src="https://github.com/Anime-pdf/FastSellCMI/assets/55580385/2b8d47b1-4490-46d3-a200-b6de92775a7f" width="450">
 </p>
