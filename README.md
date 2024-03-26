@@ -15,7 +15,7 @@ Spigot Plugin That allows to sell items by CMI's worth rate in just one menu
 **Supports minimessages and has configurable menu!**
 
 <p align="center">
-    <a href="https://discord.gg/4dH2zwTmyX">
+    <a href="https://discord.gg/nJr7vPjzNy">
         <img src="https://i.imgur.com/JgDt1Fl.png" width="300">
     </a>
     <br/>
