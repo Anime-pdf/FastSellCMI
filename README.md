@@ -2,8 +2,6 @@
 |
 [SpigotMC](https://www.spigotmc.org/resources/fastsellcmi.108261/)
 |
-[CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/fastsellcmi)
-|
 [Discord](https://discord.gg/nJr7vPjzNy)
 
 # FastSellCMI
