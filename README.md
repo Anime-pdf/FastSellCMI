@@ -9,7 +9,8 @@ PaperMC Plugin That allows to sell items by CMI's worth rate in just one menu
 <p align="center">
     <img src="https://github.com/Anime-pdf/FastSellCMI/assets/55580385/2b8d47b1-4490-46d3-a200-b6de92775a7f" width="450">
 </p>
-**Version: Paper, Folia, Purpur and other forks of Paper, 1.18.2+**  
+**Version: Paper, Folia, Purpur and other forks of Paper, 1.18.2+**
+
 **Java: 17+**
 
 **Supports minimessages and has configurable menu!**
