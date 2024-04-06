@@ -110,7 +110,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 }
 
                 if (meta.isUnbreakable()) {
-                    node.node("cmd").set(true);
+                    node.node("unbreakable").set(true);
                 }
 
                 List<String> serializedEnchantment = this.serializeEnchantments(obj);
@@ -289,11 +289,27 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
 
     private boolean isSimple(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
+        boolean complicated = false;
         if (meta == null) {
             return true;
-        } else {
-            return !meta.hasDisplayName() && !meta.hasLore() && !meta.hasCustomModelData() && !meta.hasEnchants() && meta.getItemFlags().size() <= 0 && !meta.isUnbreakable();
         }
+
+        if(meta instanceof Damageable damageable) {
+            complicated = damageable.hasDamage();
+        }
+
+        complicated = complicated ||
+                (meta instanceof PotionMeta) ||
+                (meta instanceof FireworkMeta) ||
+                (meta instanceof LeatherArmorMeta) ||
+                (meta instanceof SkullMeta) ||
+                meta.hasDisplayName() ||
+                meta.hasLore() ||
+                meta.hasCustomModelData() ||
+                meta.hasEnchants() ||
+                !meta.getItemFlags().isEmpty() ||
+                meta.isUnbreakable();
+        return !complicated;
     }
 
     private boolean isEnchantmentBook(ItemStack itemStack) {
