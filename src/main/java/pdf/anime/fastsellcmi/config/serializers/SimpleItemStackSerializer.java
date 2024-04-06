@@ -1,11 +1,10 @@
 package pdf.anime.fastsellcmi.config.serializers;
 
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +21,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
     public SimpleItemStackSerializer() {
@@ -35,7 +35,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 ItemStack item = this.deserializeSimple(simpleItemData);
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
-                    meta.displayName(node.node(new Object[]{"name"}).get(Component.class, Component.empty()));
+                    meta.displayName(node.node("name").get(Component.class, Component.empty()));
                     meta.lore(node.node("lore").getList(Component.class, new ArrayList()));
                     if (!node.node("cmd").isNull()) {
                         meta.setCustomModelData(node.node("cmd").getInt());
@@ -74,6 +74,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                     this.deserializeColor(node.node("color"), meta);
                     this.deserializePotion(node.node("potion"), meta);
                     this.deserializeFirework(node.node("firework"), meta);
+                    this.deserializeSkull(node.node("textures"), meta);
                     item.setItemMeta(meta);
                 }
 
@@ -97,7 +98,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 node = node.node(simpleItemData);
                 ItemMeta meta = obj.getItemMeta();
                 if (meta.hasDisplayName()) {
-                    node.node(new Object[]{"name"}).set(meta.displayName());
+                    node.node("name").set(meta.displayName());
                 }
 
                 if (meta.hasLore()) {
@@ -105,11 +106,11 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 }
 
                 if (meta.hasCustomModelData()) {
-                    node.node(new Object[]{"cmd"}).set(meta.getCustomModelData());
+                    node.node("cmd").set(meta.getCustomModelData());
                 }
 
                 if (meta.isUnbreakable()) {
-                    node.node(new Object[]{"unbreakable"}).set(true);
+                    node.node("cmd").set(true);
                 }
 
                 List<String> serializedEnchantment = this.serializeEnchantments(obj);
@@ -129,6 +130,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 this.serializePotion(obj, node.node("potion"));
                 this.serializeFirework(obj, node.node("firework"));
                 this.serializeColor(obj, node.node("color"));
+                this.serializeSkull(obj, node.node("textures"));
             }
         }
 
@@ -176,7 +178,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         if (itemStack.getItemMeta() != null) {
             ItemMeta var4 = itemStack.getItemMeta();
             if (var4 instanceof PotionMeta potionMeta) {
-                node.node(new Object[]{"base"}).set(potionMeta.getBasePotionData().getType().name());
+                node.node("base").set(potionMeta.getBasePotionData().getType().name());
                 node.node("effects").setList(PotionEffect.class, potionMeta.getCustomEffects());
             }
         }
@@ -186,8 +188,8 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         if (meta != null) {
             if (meta instanceof PotionMeta potionMeta) {
                 if (!node.isNull()) {
-                    if (node.node(new Object[]{"base"}).get(String.class) != null) {
-                        potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(node.node(new Object[]{"base"}).get(String.class))));
+                    if (node.node("base").get(String.class) != null) {
+                        potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(node.node("base").get(String.class))));
                         node.node("effects").getList(PotionEffect.class).forEach((effect) -> {
                             potionMeta.addCustomEffect(effect, false);
                         });
@@ -217,7 +219,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             ItemMeta var4 = itemStack.getItemMeta();
             if (var4 instanceof FireworkMeta meta) {
                 node.node("effects").setList(FireworkEffect.class, meta.getEffects());
-                node.node(new Object[]{"power"}).set(meta.getPower());
+                node.node("power").set(meta.getPower());
             }
         }
     }
@@ -246,6 +248,27 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         if (meta != null) {
             if (meta instanceof LeatherArmorMeta armorMeta) {
                 node.set(armorMeta.getColor());
+            }
+        }
+    }
+
+    private void serializeSkull(ItemStack itemStack, ConfigurationNode node) throws SerializationException {
+        if(itemStack.getItemMeta() instanceof SkullMeta meta) {
+            PlayerProfile profile = meta.getPlayerProfile();
+            if(profile == null || !profile.hasTextures()) return;
+            node.set(profile.getProperties().stream()
+                    .filter(property -> "textures".equals(property.getName())).findAny().orElseThrow().getValue());
+        }
+
+    }
+
+    private void deserializeSkull(ConfigurationNode node, ItemMeta meta) throws SerializationException {
+        if (!node.isNull()) {
+            if (meta instanceof SkullMeta skull) {
+                String textures = node.require(String.class);
+                PlayerProfile profile = Bukkit.createProfile(new UUID(textures.hashCode(), textures.hashCode()));
+                profile.setProperty(new ProfileProperty("textures", textures));
+                skull.setPlayerProfile(profile);
             }
         }
     }
