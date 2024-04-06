@@ -22,6 +22,13 @@ public class ComponentSerializer implements TypeSerializer<Component> {
     public ComponentSerializer() {
     }
 
+    private static <T> Consumer<T> withCounterConsumer(BiConsumer<Integer, T> predicate) {
+        AtomicInteger counter = new AtomicInteger();
+        return (obj) -> {
+            predicate.accept(counter.getAndIncrement(), obj);
+        };
+    }
+
     public Component deserialize(Type type, ConfigurationNode node) throws SerializationException {
         if (node.isNull()) {
             return null;
@@ -30,15 +37,15 @@ public class ComponentSerializer implements TypeSerializer<Component> {
             List<String> list = node.getList(String.class);
             list.forEach(withCounterConsumer((id, string) -> {
                 atomicComponent.getAndUpdate((component) -> {
-                    component = (TextComponent)component.append(this.deserialize(string));
+                    component = component.append(this.deserialize(string));
                     if (id + 1 != list.size()) {
-                        component = (TextComponent)component.append(Component.newline());
+                        component = component.append(Component.newline());
                     }
 
                     return component;
                 });
             }));
-            return (Component)atomicComponent.get();
+            return atomicComponent.get();
         } else {
             return this.deserialize(node.getString());
         }
@@ -46,7 +53,7 @@ public class ComponentSerializer implements TypeSerializer<Component> {
 
     public void serialize(Type type, @Nullable Component obj, ConfigurationNode node) throws SerializationException {
         if (obj == null) {
-            node.raw((Object)null);
+            node.raw(null);
         } else {
             String message = this.serialize(obj);
             if (message.contains("<br>")) {
@@ -66,13 +73,6 @@ public class ComponentSerializer implements TypeSerializer<Component> {
     }
 
     private String serialize(Component component) {
-        return (String)MINI_MESSAGE.serialize(component);
-    }
-
-    private static <T> Consumer<T> withCounterConsumer(BiConsumer<Integer, T> predicate) {
-        AtomicInteger counter = new AtomicInteger();
-        return (obj) -> {
-            predicate.accept(counter.getAndIncrement(), obj);
-        };
+        return MINI_MESSAGE.serialize(component);
     }
 }

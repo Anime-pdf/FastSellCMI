@@ -16,9 +16,8 @@ import pdf.anime.fastsellcmi.utils.BukkitRunner;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FastSellPlugin extends JavaPlugin {
-    private ConfigContainer configContainer;
-
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private ConfigContainer configContainer;
     private LiteCommands<CommandSender> liteCommands;
 
     @Override

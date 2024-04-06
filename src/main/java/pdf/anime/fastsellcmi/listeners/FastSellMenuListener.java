@@ -30,14 +30,14 @@ public class FastSellMenuListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if(e.getClickedInventory() == null) return;
+        if (e.getClickedInventory() == null) return;
         if (e.getView().getTopInventory().getHolder() instanceof FastSellMenu menu) {
             runner.run(() -> menu.updateTotalPrice(true));
 
             ItemStack currItem = e.getCurrentItem();
             Player player = (Player) e.getWhoClicked();
 
-            if(currItem == null) return;
+            if (currItem == null) return;
 
             NBTItem nbtItem = new NBTItem(currItem);
 
@@ -59,8 +59,7 @@ public class FastSellMenuListener implements Listener {
                 }
                 menu.setSold(true);
                 player.closeInventory();
-                if(price > 0)
-                {
+                if (price > 0) {
                     CMI.getInstance().getPlayerManager().getUser(player).deposit(price);
                     CMI.getInstance().save(player);
                     player.sendMessage(configContainer.getLanguageConfig().sellMessage.replaceText(TextReplacementConfig.builder().match(Pattern.compile("\\{total\\}")).replacement(format(price)).build()));
@@ -81,10 +80,8 @@ public class FastSellMenuListener implements Listener {
     }
 
     @EventHandler
-    public void onClose(InventoryCloseEvent e)
-    {
-        if(e.getInventory().getHolder() instanceof FastSellMenu menu && !menu.isSold())
-        {
+    public void onClose(InventoryCloseEvent e) {
+        if (e.getInventory().getHolder() instanceof FastSellMenu menu && !menu.isSold()) {
             for (ItemStack item : menu.getItems()) {
                 e.getPlayer().getInventory().addItem(item);
             }

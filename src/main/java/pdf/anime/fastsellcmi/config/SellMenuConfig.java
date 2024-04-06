@@ -16,7 +16,6 @@ import pdf.anime.fastsellcmi.config.serializers.SimpleItemStackSerializer;
 import pdf.anime.fastsellcmi.config.utils.ConfigHolder;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 @ConfigSerializable

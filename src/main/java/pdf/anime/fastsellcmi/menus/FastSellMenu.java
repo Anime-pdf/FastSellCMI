@@ -42,7 +42,7 @@ public class FastSellMenu implements InventoryHolder {
 
     public FastSellMenu(ConfigContainer configContainer) {
         this.configContainer = configContainer;
-        this.inventory = Bukkit.createInventory(this, 9*6, configContainer.getSellMenuConfig().windowTitle);
+        this.inventory = Bukkit.createInventory(this, 9 * 6, configContainer.getSellMenuConfig().windowTitle);
         configure();
         updateTotalPrice(true);
     }
@@ -58,14 +58,14 @@ public class FastSellMenu implements InventoryHolder {
             for (int j = 0; j < charString.length; j++) {
                 char code = charString[j];
                 ItemStack itemStack = itemMap.get(code);
-                if(itemStack == null || itemStack.getAmount() == 0 || itemStack.getType() == Material.AIR) {
+                if (itemStack == null || itemStack.getAmount() == 0 || itemStack.getType() == Material.AIR) {
                     continue;
                 }
 
                 NBT.modify(itemStack, nbt -> {
                     nbt.setString("button-type", functionalMap.get(code));
                 });
-                inventory.setItem(i*9+j, itemStack);
+                inventory.setItem(i * 9 + j, itemStack);
             }
         }
     }
@@ -74,24 +74,24 @@ public class FastSellMenu implements InventoryHolder {
         Arrays.stream(inventory.getContents()).filter(Objects::nonNull).filter(itemStack -> {
             NBTItem nbtItem = new NBTItem(itemStack);
             String type = nbtItem.getString("button-type");
-            if(type == null || type.isEmpty()) {
+            if (type == null || type.isEmpty()) {
                 return false;
             }
 
             return type.equals(SellMenuConfig.PRICE_BUTTON_TYPE);
         }).forEach(itemStack -> itemStack.editMeta(itemMeta -> {
             Character chr = configContainer.getSellMenuConfig().functionalMap.inverse().get(SellMenuConfig.PRICE_BUTTON_TYPE);
-            if(chr == null) {
+            if (chr == null) {
                 return;
             }
 
             ItemMeta meta = configContainer.getSellMenuConfig().itemMap.get(chr).getItemMeta();
 
-            if(meta == null) {
+            if (meta == null) {
                 return;
             }
             Component oldName = meta.displayName();
-            if(oldName == null) {
+            if (oldName == null) {
                 return;
             }
 
@@ -103,12 +103,12 @@ public class FastSellMenu implements InventoryHolder {
         totalPrice = 0f;
         getItems().forEach(itemStack -> {
             WorthItem worth = CMI.getInstance().getWorthManager().getWorth(itemStack);
-            if (worth != null && worth.getSellPrice() > 0){
+            if (worth != null && worth.getSellPrice() > 0) {
                 totalPrice += worth.getSellPrice() * itemStack.getAmount();
             }
         });
 
-        if(updateButton) {
+        if (updateButton) {
             updateTotalPriceButton();
         }
     }
@@ -117,7 +117,7 @@ public class FastSellMenu implements InventoryHolder {
         return Arrays.stream(inventory.getContents()).filter(Objects::nonNull).filter(itemStack -> {
             NBTItem nbtItem = new NBTItem(itemStack);
             String type = nbtItem.getString("button-type");
-            if(type == null || type.isEmpty()) {
+            if (type == null || type.isEmpty()) {
                 return true;
             }
 
@@ -131,7 +131,7 @@ public class FastSellMenu implements InventoryHolder {
     public List<ItemStack> getUnsellableItems() {
         return Arrays.stream(inventory.getContents()).filter(Objects::nonNull).filter(itemStack -> {
             NBTItem nbtItem = new NBTItem(itemStack);
-            if(!nbtItem.hasTag("button-type")) {
+            if (!nbtItem.hasTag("button-type")) {
                 WorthItem worth = CMI.getInstance().getWorthManager().getWorth(itemStack);
                 return worth == null || worth.getSellPrice() <= 0;
             }

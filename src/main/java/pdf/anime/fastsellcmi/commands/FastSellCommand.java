@@ -18,7 +18,7 @@ public class FastSellCommand {
 
     @Execute(name = "reload")
     public void reload(@Context CommandSender sender) {
-        if(!sender.hasPermission("fastsell.reload")) {
+        if (!sender.hasPermission("fastsell.reload")) {
             sender.sendMessage(configContainer.getLanguageConfig().missingPermission);
             return;
         }
@@ -29,7 +29,7 @@ public class FastSellCommand {
 
     @Execute
     public void sell(@Context CommandSender sender) {
-        if(!sender.hasPermission("fastsell.sell")) {
+        if (!sender.hasPermission("fastsell.sell")) {
             sender.sendMessage(configContainer.getLanguageConfig().missingPermission);
             return;
         }

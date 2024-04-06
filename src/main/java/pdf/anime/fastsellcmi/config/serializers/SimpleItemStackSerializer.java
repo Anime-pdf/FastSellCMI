@@ -31,7 +31,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         if (!node.isNull() && !node.isList()) {
             if (node.isMap()) {
                 node = node.childrenMap().get(node.childrenMap().keySet().toArray()[0]);
-                String simpleItemData = (String)node.key();
+                String simpleItemData = (String) node.key();
                 ItemStack item = this.deserializeSimple(simpleItemData);
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
@@ -47,7 +47,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                     if (!node.node("item_flags").isNull()) {
                         list = node.node("item_flags").getList(String.class);
                         list.forEach((attribute) -> {
-                            meta.addItemFlags(ItemFlag.valueOf(((String)attribute).toUpperCase()));
+                            meta.addItemFlags(ItemFlag.valueOf(((String) attribute).toUpperCase()));
                         });
                     }
 
@@ -55,7 +55,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                     boolean isEnchantedBook = this.isEnchantmentBook(item);
                     if (list != null) {
                         list.forEach((s) -> {
-                            String[] striped = ((String)s).split(" ");
+                            String[] striped = ((String) s).split(" ");
                             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(striped[0]));
                             if (enchantment == null) {
                                 throw new RuntimeException(striped[0] + " this enchantment not exist");
@@ -64,7 +64,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                                 if (!isEnchantedBook) {
                                     meta.addEnchant(enchantment, level, true);
                                 } else {
-                                    ((EnchantmentStorageMeta)meta).addStoredEnchant(enchantment, level, true);
+                                    ((EnchantmentStorageMeta) meta).addStoredEnchant(enchantment, level, true);
                                 }
 
                             }
@@ -144,13 +144,13 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         } else {
             Map enchantments;
             if (this.isEnchantmentBook(item)) {
-                enchantments = ((EnchantmentStorageMeta)meta).getStoredEnchants();
+                enchantments = ((EnchantmentStorageMeta) meta).getStoredEnchants();
             } else {
                 enchantments = meta.getEnchants();
             }
 
             enchantments.forEach((enchantment, level) -> {
-                String var10001 = ((Enchantment)enchantment).getKey().getKey();
+                String var10001 = ((Enchantment) enchantment).getKey().getKey();
                 serializedEnchantment.add(var10001 + " " + level);
             });
             return serializedEnchantment;
@@ -253,9 +253,9 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
     }
 
     private void serializeSkull(ItemStack itemStack, ConfigurationNode node) throws SerializationException {
-        if(itemStack.getItemMeta() instanceof SkullMeta meta) {
+        if (itemStack.getItemMeta() instanceof SkullMeta meta) {
             PlayerProfile profile = meta.getPlayerProfile();
-            if(profile == null || !profile.hasTextures()) return;
+            if (profile == null || !profile.hasTextures()) return;
             node.set(profile.getProperties().stream()
                     .filter(property -> "textures".equals(property.getName())).findAny().orElseThrow().getValue());
         }
