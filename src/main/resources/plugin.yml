@@ -1,6 +1,6 @@
 main: pdf.anime.fastsellcmi.FastSellPlugin
 name: FastSellCMI
-version: '2.0'
+version: '2.1'
 description: CMI extension that allows fast selling
 load: POSTWORLD
 author: Animepdf

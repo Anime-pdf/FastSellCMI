@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'pdf.anime.fastsellcmi'
-ext.projectVersion = '2.0.0'
+ext.projectVersion = '2.1.0'
 
 def targetJavaVersion = 17
 java {
