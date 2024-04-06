@@ -43,24 +43,11 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
             "WSSSPCCCW"
     };
 
-    /* public Map<Character, ItemStack> itemMap = new HashMap<>(){{
-        put('S', SELL_BUTTON_ITEM);
-        put('C', CANCEL_BUTTON_ITEM);
-        put('P', PRICE_BUTTON_ITEM);
-        put('W', WALL_BUTTON_ITEM);
-    }}; */
     public BiMap<Character, ItemStack> itemMap = HashBiMap.create(Map.of(
             'S', SELL_BUTTON_ITEM,
             'C', CANCEL_BUTTON_ITEM,
             'P', PRICE_BUTTON_ITEM,
             'W', WALL_BUTTON_ITEM));
-
-    /* public Map<Character, String> functionalMap = new HashMap<>() {{
-        put('S', SELL_BUTTON_TYPE);
-        put('C', CANCEL_BUTTON_TYPE);
-        put('P', PRICE_BUTTON_TYPE);
-        put('W', WALL_BUTTON_TYPE);
-    }}; */
 
     public BiMap<Character, String> functionalMap = HashBiMap.create(Map.of(
             'S', SELL_BUTTON_TYPE,
@@ -68,8 +55,6 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
             'P', PRICE_BUTTON_TYPE,
             'W', WALL_BUTTON_TYPE
     ));
-
-
 
     public SellMenuConfig(File baseFilePath) {
         super(baseFilePath, TypeSerializerCollection.builder()
