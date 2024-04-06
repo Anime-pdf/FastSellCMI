@@ -80,7 +80,7 @@ public class FastSellMenu implements InventoryHolder {
 
             return type.equals(SellMenuConfig.PRICE_BUTTON_TYPE);
         }).forEach(itemStack -> itemStack.editMeta(itemMeta -> {
-            Character chr = getKey(configContainer.getSellMenuConfig().functionalMap, SellMenuConfig.PRICE_BUTTON_TYPE);
+            Character chr = configContainer.getSellMenuConfig().functionalMap.inverse().get(SellMenuConfig.PRICE_BUTTON_TYPE);
             if(chr == null) {
                 return;
             }
@@ -139,6 +139,7 @@ public class FastSellMenu implements InventoryHolder {
             return false;
         }).toList();
     }
+
 
     @Override
     public @NotNull Inventory getInventory() {
