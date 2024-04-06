@@ -115,3 +115,9 @@ color-example:
     color:
       hex: '#00ffff'
 </pre>
+Player skull example:
+<pre>
+skull-example:
+  player_head 1:
+    textures: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTcxNzA1NzY4NDY4ZWViNjM2NmYyYWVhODQ3YjBjNzI2NGUwNWYyNWZlMGZiNGMxZTNlNjYzN2I5NTQ1MjY1YyJ9fX0=
+</pre>
