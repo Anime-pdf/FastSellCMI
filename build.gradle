@@ -40,10 +40,14 @@ dependencies {
 
     // Config
     implementation 'org.spongepowered:configurate-core:4.1.2'
-    implementation 'org.spongepowered:configurate-yaml:4.1.2'
+    implementation ('org.spongepowered:configurate-yaml:4.1.2') {
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
 
     // Commands
-    implementation 'dev.rollczi:litecommands-bukkit:3.4.0'
+    implementation ('dev.rollczi:litecommands-bukkit:3.4.0') {
+        exclude group: 'org.jetbrains', module: 'annotations'
+    }
 
     // NBTAPI
     implementation 'de.tr7zw:item-nbt-api:2.12.2'
@@ -57,7 +61,11 @@ build {
 }
 
 shadowJar {
-    relocate 'de.tr7zw.changeme.nbtapi', 'pdf.anime.fastsellcmi.nbtapi'
+    relocate 'de.tr7zw.changeme.nbtapi', 'pdf.anime.fastsellcmi.libs.nbtapi'
+    relocate 'org.spongepowered.configurate', 'pdf.anime.fastsellcmi.libs.configurate'
+    relocate 'io.leangen.geantyref', 'pdf.anime.fastsellcmi.libs.geantyref'
+    relocate 'dev.rollczi.litecommands', 'pdf.anime.fastsellcmi.libs.litecommands'
+    relocate 'panda.std', 'pdf.anime.fastsellcmi.libs.panda.std'
     incrementBuildVersion()
 }
 
