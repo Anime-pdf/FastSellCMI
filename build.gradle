@@ -25,10 +25,9 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 repositories {
-    mavenCentral()
-    maven { url 'https://repo.papermc.io/repository/maven-public/' }
-    maven { url 'https://repo.panda-lang.org/releases' }
-    maven { url 'https://repo.codemc.io/repository/maven-public/' }
+    mavenCentral() // configurate
+    maven { url 'https://repo.papermc.io/repository/maven-public/' } // paper-api
+    maven { url 'https://jitpack.io' } // vault-api
     maven { url 'https://repo.aikar.co/content/groups/aikar/' } // commands-api
 }
 
@@ -46,9 +45,6 @@ dependencies {
     }
 
     // Commands
-
-    // NBTAPI
-    implementation 'de.tr7zw:item-nbt-api:2.12.2'
     implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
 
     compileOnly 'org.projectlombok:lombok:1.18.30'
@@ -60,7 +56,8 @@ build {
 }
 
 shadowJar {
-    relocate 'de.tr7zw.changeme.nbtapi', 'pdf.anime.fastsellcmi.libs.nbtapi'
+    archiveClassifier = ''
+
     relocate 'org.spongepowered.configurate', 'pdf.anime.fastsellcmi.libs.configurate'
     relocate 'io.leangen.geantyref', 'pdf.anime.fastsellcmi.libs.geantyref'
     relocate 'net.kyori.option', 'pdf.anime.fastsellcmi.libs.kyori_option'
