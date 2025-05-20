@@ -29,6 +29,7 @@ repositories {
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://repo.panda-lang.org/releases' }
     maven { url 'https://repo.codemc.io/repository/maven-public/' }
+    maven { url 'https://repo.aikar.co/content/groups/aikar/' } // commands-api
 }
 
 dependencies {
@@ -45,12 +46,10 @@ dependencies {
     }
 
     // Commands
-    implementation ('dev.rollczi:litecommands-bukkit:3.4.0') {
-        exclude group: 'org.jetbrains', module: 'annotations'
-    }
 
     // NBTAPI
     implementation 'de.tr7zw:item-nbt-api:2.12.2'
+    implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
 
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
@@ -64,8 +63,11 @@ shadowJar {
     relocate 'de.tr7zw.changeme.nbtapi', 'pdf.anime.fastsellcmi.libs.nbtapi'
     relocate 'org.spongepowered.configurate', 'pdf.anime.fastsellcmi.libs.configurate'
     relocate 'io.leangen.geantyref', 'pdf.anime.fastsellcmi.libs.geantyref'
-    relocate 'dev.rollczi.litecommands', 'pdf.anime.fastsellcmi.libs.litecommands'
-    relocate 'panda.std', 'pdf.anime.fastsellcmi.libs.panda.std'
+    relocate 'net.kyori.option', 'pdf.anime.fastsellcmi.libs.kyori_option'
+    relocate 'org.jspecify', 'pdf.anime.fastsellcmi.libs.jspecify'
+
+    relocate 'co.aikar.commands', 'pdf.anime.fastsellcmi.libs.acf'
+    relocate 'co.aikar.locales', 'pdf.anime.fastsellcmi.libs.locales'
 
     manifest {
         attributes["paperweight-mappings-namespace"] = "mojang"

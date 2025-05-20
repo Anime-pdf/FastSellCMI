@@ -1,41 +1,44 @@
 package pdf.anime.fastsellcmi.commands;
 
-import dev.rollczi.litecommands.annotations.command.Command;
-import dev.rollczi.litecommands.annotations.context.Context;
-import dev.rollczi.litecommands.annotations.execute.Execute;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pdf.anime.fastsellcmi.config.ConfigContainer;
-import pdf.anime.fastsellcmi.menus.FastSellMenu;
+import pdf.anime.fastsellcmi.services.MenuService;
 
-@Command(name = "fastsell", aliases = "fsell")
-public class FastSellCommand {
+@CommandAlias("fastsell|fsell")
+public class FastSellCommand extends BaseCommand {
     private final ConfigContainer configContainer;
+    private final MenuService menuService;
 
-    public FastSellCommand(ConfigContainer configContainer) {
+    public FastSellCommand(ConfigContainer configContainer, MenuService menuService) {
         this.configContainer = configContainer;
+        this.menuService = menuService;
     }
 
-    @Execute(name = "reload")
-    public void reload(@Context CommandSender sender) {
+    @Default
+    @Description("Opens the fast sell menu.")
+    public void onSell(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("This command can only be run by a player.");
+            return;
+        }
+        if (!player.hasPermission("fastsell.open")) {
+            player.sendMessage(configContainer.getLanguageConfig().missingPermission);
+            return;
+        }
+        menuService.openFastSellMenu(player);
+    }
+
+    @Subcommand("reload")
+    @Description("Reloads the FastSellCMI configuration.")
+    public void onReload(CommandSender sender) {
         if (!sender.hasPermission("fastsell.reload")) {
             sender.sendMessage(configContainer.getLanguageConfig().missingPermission);
             return;
         }
-
         configContainer.reloadConfigs();
         sender.sendMessage(configContainer.getLanguageConfig().configReloaded);
-    }
-
-    @Execute
-    public void sell(@Context CommandSender sender) {
-        if (!sender.hasPermission("fastsell.sell")) {
-            sender.sendMessage(configContainer.getLanguageConfig().missingPermission);
-            return;
-        }
-
-        if (sender instanceof Player player) {
-            player.openInventory(new FastSellMenu(configContainer).getInventory());
-        }
     }
 }
