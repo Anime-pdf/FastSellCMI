@@ -39,8 +39,8 @@ dependencies {
     compileOnly files('libs/CMIAPI-9.7.4.1.jar')
 
     // Config
-    implementation 'org.spongepowered:configurate-core:4.1.2'
-    implementation ('org.spongepowered:configurate-yaml:4.1.2') {
+    implementation 'org.spongepowered:configurate-core:4.2.0'
+    implementation ('org.spongepowered:configurate-yaml:4.2.0') {
         exclude group: 'org.yaml', module: 'snakeyaml'
     }
 
