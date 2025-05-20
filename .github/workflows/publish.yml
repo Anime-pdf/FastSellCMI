@@ -46,6 +46,12 @@ jobs:
         with:
           files: |
             build/*.jar
+          loaders: |
+            paper
+            purpur
+            folia
+          game-versions: |
+            >=1.18.2
           version: ${{ github.ref_name }}
           modrinth-id: ${{ vars.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
