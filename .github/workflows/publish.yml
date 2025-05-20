@@ -14,15 +14,15 @@ jobs:
         with:
           java-version: '21'
           distribution: 'corretto'
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: "wrapper"
-      - name: Build JARs
-        uses: Wandalen/wretry.action@master
-        with:
-          command: "gradle build"
-          attempt_limit: 3
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Build
+        run: ./gradlew build
+      - name: Publish to Hangar
+        env:
+          HANGAR_ID: ${{ vars.HANGAR_ID }}
+          HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+        run: ./gradlew build publishPluginPublicationToHangar --stacktrace
       - name: Upload Built JARs
         uses: actions/upload-artifact@v4
         with:
@@ -56,10 +56,3 @@ jobs:
           modrinth-id: ${{ vars.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - name: Publish to Hangar
-        env:
-          HANGAR_ID: ${{ vars.HANGAR_ID }}
-          HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
-        run: ./gradlew build publishPluginPublicationToHangar --stacktrace
