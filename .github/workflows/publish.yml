@@ -34,6 +34,8 @@ jobs:
     needs: build
     runs-on: "ubuntu-latest"
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
       - name: Download Built JARs
         uses: actions/download-artifact@v4
         with:
@@ -43,7 +45,7 @@ jobs:
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           files: |
-            build/*.jar
+            build/libs/*.jar
           version: ${{ github.ref_name }}
           modrinth-id: ${{ vars.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -52,6 +54,6 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Publish to Hangar.
         env:
-          HANGAR_ID: ${{ secrets.HANGAR_ID }}
+          HANGAR_ID: ${{ vars.HANGAR_ID }}
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace
