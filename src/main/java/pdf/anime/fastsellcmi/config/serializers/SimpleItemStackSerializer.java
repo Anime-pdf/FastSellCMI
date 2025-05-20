@@ -1,6 +1,5 @@
 package pdf.anime.fastsellcmi.config.serializers;
 
-
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
@@ -13,6 +12,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -24,70 +24,66 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
+
     public SimpleItemStackSerializer() {
     }
 
-    public ItemStack deserialize(Type type, ConfigurationNode node) throws SerializationException {
-        if (!node.isNull() && !node.isList()) {
-            if (node.isMap()) {
-                node = node.childrenMap().get(node.childrenMap().keySet().toArray()[0]);
-                String simpleItemData = (String) node.key();
-                ItemStack item = this.deserializeSimple(simpleItemData);
-                ItemMeta meta = item.getItemMeta();
-                if (meta != null) {
-                    meta.displayName(node.node("name").get(Component.class, Component.empty()));
-                    meta.lore(node.node("lore").getList(Component.class, new ArrayList()));
-                    if (!node.node("cmd").isNull()) {
-                        meta.setCustomModelData(node.node("cmd").getInt());
-                    }
+    public ItemStack deserialize(@NotNull Type type, ConfigurationNode node) throws SerializationException {
+        if (node.isNull() || node.isList()) return null;
+        if (!node.isMap()) return this.deserializeSimple(node.getString(""));
 
-                    meta.setUnbreakable(node.node("unbreakable").getBoolean(false));
-                    this.deserializeDurability(node.node("durability"), meta, item.getType());
-                    List list;
-                    if (!node.node("item_flags").isNull()) {
-                        list = node.node("item_flags").getList(String.class);
-                        list.forEach((attribute) -> {
-                            meta.addItemFlags(ItemFlag.valueOf(((String) attribute).toUpperCase()));
-                        });
-                    }
-
-                    list = node.node("enchantments").getList(String.class);
-                    boolean isEnchantedBook = this.isEnchantmentBook(item);
-                    if (list != null) {
-                        list.forEach((s) -> {
-                            String[] striped = ((String) s).split(" ");
-                            Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(striped[0]));
-                            if (enchantment == null) {
-                                throw new RuntimeException(striped[0] + " this enchantment not exist");
-                            } else {
-                                int level = Integer.parseInt(striped[1]);
-                                if (!isEnchantedBook) {
-                                    meta.addEnchant(enchantment, level, true);
-                                } else {
-                                    ((EnchantmentStorageMeta) meta).addStoredEnchant(enchantment, level, true);
-                                }
-
-                            }
-                        });
-                    }
-
-                    this.deserializeColor(node.node("color"), meta);
-                    this.deserializePotion(node.node("potion"), meta);
-                    this.deserializeFirework(node.node("firework"), meta);
-                    this.deserializeSkull(node.node("textures"), meta);
-                    item.setItemMeta(meta);
-                }
-
-                return item;
-            } else {
-                return this.deserializeSimple(node.getString());
+        node = node.childrenMap().get(node.childrenMap().keySet().toArray()[0]);
+        String simpleItemData = (String) node.key();
+        ItemStack item = null;
+        item = this.deserializeSimple(simpleItemData);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.displayName(node.node("name").get(Component.class, Component.empty()));
+            meta.lore(node.node("lore").getList(Component.class, new ArrayList<>()));
+            if (!node.node("cmd").isNull()) {
+                meta.setCustomModelData(node.node("cmd").getInt());
             }
-        } else {
-            return null;
+
+            meta.setUnbreakable(node.node("unbreakable").getBoolean(false));
+            this.deserializeDurability(node.node("durability"), meta, item.getType());
+            List<String> list;
+            if (!node.node("item_flags").isNull()) {
+                list = node.node("item_flags").getList(String.class, new ArrayList<>());
+                list.forEach((attribute) -> {
+                    meta.addItemFlags(ItemFlag.valueOf(((String) attribute).toUpperCase()));
+                });
+            }
+
+            list = node.node("enchantments").getList(String.class);
+            boolean isEnchantedBook = this.isEnchantmentBook(item);
+            if (list != null) {
+                list.forEach((s) -> {
+                    String[] striped = ((String) s).split(" ");
+                    Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(striped[0]));
+                    if (enchantment == null) {
+                        throw new RuntimeException(striped[0] + " this enchantment not exist");
+                    } else {
+                        int level = Integer.parseInt(striped[1]);
+                        if (!isEnchantedBook) {
+                            meta.addEnchant(enchantment, level, true);
+                        } else {
+                            ((EnchantmentStorageMeta) meta).addStoredEnchant(enchantment, level, true);
+                        }
+                    }
+                });
+            }
+
+            this.deserializeColor(node.node("color"), meta);
+            this.deserializePotion(node.node("potion"), meta);
+            this.deserializeFirework(node.node("firework"), meta);
+            this.deserializeSkull(node.node("textures"), meta);
+            item.setItemMeta(meta);
         }
+
+        return item;
     }
 
-    public void serialize(Type type, @Nullable ItemStack obj, ConfigurationNode node) throws SerializationException {
+    public void serialize(@NotNull Type type, @Nullable ItemStack obj, @NotNull ConfigurationNode node) throws SerializationException {
         if (obj == null) {
             node.raw(null);
         } else {
@@ -114,15 +110,15 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 }
 
                 List<String> serializedEnchantment = this.serializeEnchantments(obj);
-                if (serializedEnchantment.size() != 0) {
+                if (!serializedEnchantment.isEmpty()) {
                     node.node("enchantments").setList(String.class, serializedEnchantment);
                 }
 
-                List<String> serializedItemFlag = new ArrayList();
+                List<String> serializedItemFlag = new ArrayList<>();
                 meta.getItemFlags().forEach((itemFlag) -> {
                     serializedItemFlag.add(itemFlag.name().toLowerCase());
                 });
-                if (serializedItemFlag.size() > 0) {
+                if (!serializedItemFlag.isEmpty()) {
                     node.node("item_flags").setList(String.class, serializedItemFlag);
                 }
 
@@ -133,16 +129,15 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 this.serializeSkull(obj, node.node("textures"));
             }
         }
-
     }
 
     private List<String> serializeEnchantments(ItemStack item) {
-        List<String> serializedEnchantment = new ArrayList();
+        List<String> serializedEnchantment = new ArrayList<>();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return serializedEnchantment;
         } else {
-            Map enchantments;
+            Map<Enchantment, Integer> enchantments;
             if (this.isEnchantmentBook(item)) {
                 enchantments = ((EnchantmentStorageMeta) meta).getStoredEnchants();
             } else {
@@ -150,7 +145,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             }
 
             enchantments.forEach((enchantment, level) -> {
-                String var10001 = ((Enchantment) enchantment).getKey().getKey();
+                String var10001 = enchantment.getKey().getKey();
                 serializedEnchantment.add(var10001 + " " + level);
             });
             return serializedEnchantment;
@@ -167,7 +162,6 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 }
             }
         }
-
     }
 
     private boolean isDamageable(ItemStack itemStack) {
@@ -190,7 +184,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 if (!node.isNull()) {
                     if (node.node("base").get(String.class) != null) {
                         potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(node.node("base").get(String.class))));
-                        node.node("effects").getList(PotionEffect.class).forEach((effect) -> {
+                        node.node("effects").getList(PotionEffect.class, new ArrayList<>()).forEach((effect) -> {
                             potionMeta.addCustomEffect(effect, false);
                         });
                     }
@@ -229,7 +223,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             if (meta instanceof FireworkMeta fireworkMeta) {
                 if (!node.isNull()) {
                     fireworkMeta.setPower(node.node("power").getInt());
-                    fireworkMeta.addEffects(node.node("effects").getList(FireworkEffect.class, new ArrayList()));
+                    fireworkMeta.addEffects(node.node("effects").getList(FireworkEffect.class, new ArrayList<>()));
                 }
             }
         }
@@ -259,7 +253,6 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             node.set(profile.getProperties().stream()
                     .filter(property -> "textures".equals(property.getName())).findAny().orElseThrow().getValue());
         }
-
     }
 
     private void deserializeSkull(ConfigurationNode node, ItemMeta meta) throws SerializationException {
@@ -283,7 +276,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         if (stripped.length != 2) {
             throw new RuntimeException("must be 2 parameters {material count}");
         } else {
-            return new ItemStack(Material.getMaterial(stripped[0].toUpperCase()), Integer.parseInt(stripped[1]));
+            return new ItemStack(Material.valueOf(stripped[0].toUpperCase()), Integer.parseInt(stripped[1]));
         }
     }
 
@@ -294,7 +287,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             return true;
         }
 
-        if(meta instanceof Damageable damageable) {
+        if (meta instanceof Damageable damageable) {
             complicated = damageable.hasDamage();
         }
 
@@ -303,6 +296,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 (meta instanceof FireworkMeta) ||
                 (meta instanceof LeatherArmorMeta) ||
                 (meta instanceof SkullMeta) ||
+                (meta instanceof EnchantmentStorageMeta) ||
                 meta.hasDisplayName() ||
                 meta.hasLore() ||
                 meta.hasCustomModelData() ||

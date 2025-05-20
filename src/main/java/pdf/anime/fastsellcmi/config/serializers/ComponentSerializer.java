@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -29,29 +30,31 @@ public class ComponentSerializer implements TypeSerializer<Component> {
         };
     }
 
-    public Component deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public Component deserialize(@NotNull Type type, ConfigurationNode node) throws SerializationException {
         if (node.isNull()) {
             return null;
         } else if (node.isList()) {
-            AtomicReference<TextComponent> atomicComponent = new AtomicReference(Component.empty());
+            AtomicReference<TextComponent> atomicComponent = new AtomicReference<>(Component.empty());
             List<String> list = node.getList(String.class);
-            list.forEach(withCounterConsumer((id, string) -> {
-                atomicComponent.getAndUpdate((component) -> {
-                    component = component.append(this.deserialize(string));
-                    if (id + 1 != list.size()) {
-                        component = component.append(Component.newline());
-                    }
+            if (list != null) {
+                list.forEach(withCounterConsumer((id, string) -> {
+                    atomicComponent.getAndUpdate((component) -> {
+                        component = component.append(this.deserialize(string));
+                        if (id + 1 != list.size()) {
+                            component = component.append(Component.newline());
+                        }
 
-                    return component;
-                });
-            }));
+                        return component;
+                    });
+                }));
+            }
             return atomicComponent.get();
         } else {
             return this.deserialize(node.getString());
         }
     }
 
-    public void serialize(Type type, @Nullable Component obj, ConfigurationNode node) throws SerializationException {
+    public void serialize(@NotNull Type type, @Nullable Component obj, @NotNull ConfigurationNode node) throws SerializationException {
         if (obj == null) {
             node.raw(null);
         } else {
@@ -65,7 +68,6 @@ public class ComponentSerializer implements TypeSerializer<Component> {
                 node.set(message);
             }
         }
-
     }
 
     private Component deserialize(String text) {
