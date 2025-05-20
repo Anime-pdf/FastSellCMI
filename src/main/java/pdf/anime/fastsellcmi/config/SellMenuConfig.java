@@ -1,40 +1,26 @@
 package pdf.anime.fastsellcmi.config;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.serialize.TypeSerializerCollection;
-import pdf.anime.fastsellcmi.config.serializers.*;
-import pdf.anime.fastsellcmi.config.utils.ConfigHolder;
 
-import java.io.File;
 import java.util.Map;
 
 @ConfigSerializable
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
-    transient static public String SELL_BUTTON_TYPE = "sell-button";
-    transient static public String CANCEL_BUTTON_TYPE = "cancel-button";
-    transient static public String PRICE_BUTTON_TYPE = "price-button";
-    transient static public String WALL_BUTTON_TYPE = "wall-button";
+public class SellMenuConfig {
+    final static public String SELL_BUTTON_TYPE = "sell-button";
+    final static public String CANCEL_BUTTON_TYPE = "cancel-button";
+    final static public String PRICE_BUTTON_TYPE = "price-button";
+    final static public String WALL_BUTTON_TYPE = "wall-button";
 
-    transient static private ItemStack SELL_BUTTON_ITEM;
-    transient static private ItemStack CANCEL_BUTTON_ITEM;
-    transient static private ItemStack PRICE_BUTTON_ITEM;
-    transient static private ItemStack WALL_BUTTON_ITEM;
-
-    public Component windowTitle = Component.text("Fast sell you items!", NamedTextColor.GREEN);
+    public Component windowTitle = Component.text("Fast sell your items!", NamedTextColor.GREEN);
     public String[] inventoryMap = new String[]{
             "WWWWWWWWW",
             "W       W",
@@ -44,11 +30,14 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
             "WSSSPCCCW"
     };
 
-    public BiMap<Character, ItemStack> itemMap;
-    public BiMap<Character, String> functionalMap;
+    public Map<Character, ItemStack> itemMap;
+    public Map<Character, String> functionalMap;
 
-    public SellMenuConfig(File baseFilePath) {
-        super(baseFilePath, TypeSerializerCollection.builder().register(Component.class, new ComponentSerializer()).register(Color.class, new ColorSerializer()).register(PotionEffect.class, new PotionEffectSerializer()).register(FireworkEffect.class, new FireworkEffectSerializer()).register(ItemStack.class, new SimpleItemStackSerializer()).build());
+    public SellMenuConfig() {
+        final ItemStack sellButtonItem;
+        final ItemStack cancelButtonItem;
+        final ItemStack priceButtonItem;
+        final ItemStack wallButtonItem;
 
         { // sell button
             ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
@@ -56,7 +45,7 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
                 itemMeta.displayName(Component.text("SELL", NamedTextColor.GREEN));
             });
 
-            SELL_BUTTON_ITEM = item;
+            sellButtonItem = item;
         }
         { // cancel button
             ItemStack item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
@@ -64,7 +53,7 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
                 itemMeta.displayName(Component.text("CANCEL", NamedTextColor.RED));
             });
 
-            CANCEL_BUTTON_ITEM = item;
+            cancelButtonItem = item;
         }
         { // price button
             ItemStack item = new ItemStack(Material.END_CRYSTAL);
@@ -72,7 +61,7 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
                 itemMeta.displayName(Component.text("Sell for: ", NamedTextColor.BLUE).append(Component.text("{total}", NamedTextColor.RED)));
             });
 
-            PRICE_BUTTON_ITEM = item;
+            priceButtonItem = item;
         }
         { // wall button
             ItemStack item = new ItemStack(Material.PURPLE_STAINED_GLASS_PANE);
@@ -80,15 +69,38 @@ public class SellMenuConfig extends ConfigHolder<SellMenuConfig> {
                 itemMeta.displayName(Component.text(" "));
             });
 
-            WALL_BUTTON_ITEM = item;
+            wallButtonItem = item;
         }
 
-        itemMap = HashBiMap.create(Map.of('S', SELL_BUTTON_ITEM, 'C', CANCEL_BUTTON_ITEM, 'P', PRICE_BUTTON_ITEM, 'W', WALL_BUTTON_ITEM));
-
-        functionalMap = HashBiMap.create(Map.of('S', SELL_BUTTON_TYPE, 'C', CANCEL_BUTTON_TYPE, 'P', PRICE_BUTTON_TYPE, 'W', WALL_BUTTON_TYPE));
+        itemMap = Map.of('S', sellButtonItem, 'C', cancelButtonItem, 'P', priceButtonItem, 'W', wallButtonItem);
+        functionalMap = Map.of('S', SELL_BUTTON_TYPE, 'C', CANCEL_BUTTON_TYPE, 'P', PRICE_BUTTON_TYPE, 'W', WALL_BUTTON_TYPE);
     }
 
-    public SellMenuConfig() {
-        this(null);
+    public Character getCharacterForButtonType(String buttonType) {
+        if (buttonType == null || functionalMap == null) {
+            return null;
+        }
+        for (Map.Entry<Character, String> entry : functionalMap.entrySet()) {
+            if (buttonType.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    public ItemStack getItemForCharacter(Character character) {
+        if (character == null || itemMap == null) {
+            return null;
+        }
+        for (Map.Entry<Character, ItemStack> entry : itemMap.entrySet()) {
+            if (character.equals(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+    public ItemStack getItemForButtonType(String buttonType) {
+        Character character = getCharacterForButtonType(buttonType);
+        if (character == null) return null;
+        return getItemForCharacter(character);
     }
 }
