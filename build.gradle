@@ -3,9 +3,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-group 'pdf.anime.fastsellcmi'
-ext.projectVersion = '2.1.0'
 group = 'pdf.anime.fastsellcmi'
+ext.projectVersion = '3.0.0'
 
 def targetJavaVersion = 17
 java {
