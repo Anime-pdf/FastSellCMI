@@ -66,7 +66,6 @@ shadowJar {
     relocate 'io.leangen.geantyref', 'pdf.anime.fastsellcmi.libs.geantyref'
     relocate 'dev.rollczi.litecommands', 'pdf.anime.fastsellcmi.libs.litecommands'
     relocate 'panda.std', 'pdf.anime.fastsellcmi.libs.panda.std'
-    incrementBuildVersion()
 
     manifest {
         attributes["paperweight-mappings-namespace"] = "mojang"
@@ -75,49 +74,4 @@ shadowJar {
 
 test {
     useJUnitPlatform()
-}
-
-def createPropertiesIfNotExist() {
-    def versionPropsFile = file('version.properties')
-    if(!versionPropsFile.exists()) {
-        versionPropsFile.createNewFile()
-        BufferedWriter writer = new BufferedWriter(new FileWriter('version.properties'))
-        writer.write("build=0")
-        writer.close()
-    }
-}
-
-def getBuildVersion() {
-    createPropertiesIfNotExist()
-    def versionPropsFile = file('version.properties')
-    if(versionPropsFile.canRead()) {
-        Properties versionProps = new Properties()
-        versionProps.load(new FileInputStream(versionPropsFile))
-        return versionProps['build'].toInteger()
-    } else {
-        throw new GradleException("Could no read properties")
-    }
-}
-
-def setBuildVersion(buildVersion) {
-    createPropertiesIfNotExist()
-    def versionPropsFile = file('version.properties')
-    if(versionPropsFile.canRead()) {
-        Properties versionProps = new Properties()
-        versionProps.load(new FileInputStream(versionPropsFile))
-        versionProps['build'] = buildVersion.toString()
-        versionProps.store(versionPropsFile.newWriter(), null)
-    } else {
-        throw new GradleException("Could no read properties")
-    }
-}
-
-def incrementBuildVersion() {
-    def buildOutputFolder = file('build/libs')
-    buildOutputFolder.mkdirs()
-    Arrays.asList(buildOutputFolder.listFiles()).forEach(file -> file.delete())
-
-    def code = getBuildVersion() + 1
-    setBuildVersion(code)
-    version projectVersion + "-build" + code
 }
