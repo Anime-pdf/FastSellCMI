@@ -1,6 +1,5 @@
 package pdf.anime.fastsellcmi.utils;
 
-
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Bukkit;
@@ -16,5 +15,8 @@ public class BukkitRunner {
 
     public void run(Runnable task) {
         Bukkit.getScheduler().runTask(javaPlugin, task);
+    }
+    public void runLater(Runnable task, long delay) {
+        Bukkit.getScheduler().runTaskLater(javaPlugin, task, delay);
     }
 }
