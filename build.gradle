@@ -85,7 +85,7 @@ hangarPublish {
 
         platforms {
             paper {
-                jar = shadowJar.getJar()
+                jar = shadowJar.archiveFile
                 platformVersions = ['1.18.2-1.21.5']
                 dependencies {
                     url('CMI', 'https://www.zrips.net/cmi/')
