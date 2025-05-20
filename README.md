@@ -1,6 +1,6 @@
 [Modrinth](https://modrinth.com/plugin/fastsellcmi)
 |
-[SpigotMC](https://www.spigotmc.org/resources/fastsellcmi.108261/)
+[Hangar](https://hangar.papermc.io/Animepdf/FastSellCMI)
 |
 [Discord](https://discord.gg/nJr7vPjzNy)
 
@@ -31,7 +31,7 @@ PaperMC Plugin That allows to sell items by CMI's worth rate in just one menu
 * * `reload` - reload configs
 
 ## Permissions:
-* `fastsell.sell` - Allows `/fastsell` command. Default: all
+* `fastsell.open` - Allows `/fastsell` command. Default: all
 * `fastsell.reload` - Allows `/fastsell reload` command. Default: op
 * `fastsell.*` - Allows all commands. Default: op
 
@@ -39,14 +39,18 @@ PaperMC Plugin That allows to sell items by CMI's worth rate in just one menu
 
 ### config.yml
 
-| Variable           | Default Value                         | Placeholders                             |
-|--------------------|---------------------------------------|------------------------------------------|
-| config-reloaded    | `<green>FastSellCMI config reloaded!` |                                          |
-| missing-permission | `<red>Not enough permissions!`        |                                          |
-| sell-message       | `<green>Items sold! You got {total}`  | `{total}` - Total amount of received money |
-| cancel-message     | `<red>You canceled selling!`          |                                          |
-| sell-sound         | `ENTITY_VILLAGER_TRADE`               |                                          |
-| cancel-sound       | `ENTITY_VILLAGER_NO`                  |                                          |
+
+
+| Variable               | Default Value                                                         | Placeholders                               |
+|------------------------|-----------------------------------------------------------------------|--------------------------------------------|
+| config-reloaded        | `<green>FastSellCMI config reloaded!`                                 |                                            |
+| missing-permission     | `<red>Not enough permissions!`                                        |                                            |
+| sell-message           | `<green>Items sold! You got {total}`                                  | `{total}` - Total amount of received money |
+| no-items-sold-message  | `<yellow>No items could be sold.`                                     |                                            |
+| cancel-message         | `<red>You canceled selling!`                                          |                                            |
+| sell-sound             | <pre>  name: ENTITY_VILLAGER_TRADE<br>  volume: 1<br>  pitch: 0</pre> |                                            |
+| no-items-sold-sound    | <pre>  name: ENTITY_VILLAGER_HURT<br>  volume: 1<br>  pitch: 0</pre>  |                                            |
+| cancel-sound           | <pre>  name: ENTITY_VILLAGER_NO<br>  volume: 1<br>  pitch: 0</pre>    |                                            |
 
 ### sell_menu.yml
 

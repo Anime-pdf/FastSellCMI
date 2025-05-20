@@ -9,7 +9,7 @@ prefix: FastSell
 depend: [ CMI, Vault ]
 api-version: 1.18
 permissions:
-  fastsell.sell:
+  fastsell.open:
     description: Allows fastsell command
     default: true
   fastsell.reload:
@@ -19,5 +19,5 @@ permissions:
     description: Wildcard permission
     default: op
     children:
-      fastsell.sell: true
+      fastsell.open: true
       fastsell.reload: true
