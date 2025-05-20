@@ -53,7 +53,7 @@ public class FastSellMenuListener implements Listener {
                 handleSell(player, menu);
                 break;
             case SellMenuConfig.CANCEL_BUTTON_TYPE:
-                handleCancel(player, menu);
+                handleCancel(player);
                 break;
         }
     }
@@ -87,7 +87,7 @@ public class FastSellMenuListener implements Listener {
         }
     }
 
-    private void handleCancel(Player player, FastSellMenu menu) {
+    private void handleCancel(Player player) {
         player.closeInventory();
     }
 

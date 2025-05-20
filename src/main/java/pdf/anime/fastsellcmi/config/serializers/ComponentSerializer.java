@@ -25,9 +25,7 @@ public class ComponentSerializer implements TypeSerializer<Component> {
 
     private static <T> Consumer<T> withCounterConsumer(BiConsumer<Integer, T> predicate) {
         AtomicInteger counter = new AtomicInteger();
-        return (obj) -> {
-            predicate.accept(counter.getAndIncrement(), obj);
-        };
+        return (obj) -> predicate.accept(counter.getAndIncrement(), obj);
     }
 
     public Component deserialize(@NotNull Type type, ConfigurationNode node) throws SerializationException {
@@ -37,16 +35,14 @@ public class ComponentSerializer implements TypeSerializer<Component> {
             AtomicReference<TextComponent> atomicComponent = new AtomicReference<>(Component.empty());
             List<String> list = node.getList(String.class);
             if (list != null) {
-                list.forEach(withCounterConsumer((id, string) -> {
-                    atomicComponent.getAndUpdate((component) -> {
-                        component = component.append(this.deserialize(string));
-                        if (id + 1 != list.size()) {
-                            component = component.append(Component.newline());
-                        }
+                list.forEach(withCounterConsumer((id, string) -> atomicComponent.getAndUpdate((component) -> {
+                    component = component.append(this.deserialize(string));
+                    if (id + 1 != list.size()) {
+                        component = component.append(Component.newline());
+                    }
 
-                        return component;
-                    });
-                }));
+                    return component;
+                })));
             }
             return atomicComponent.get();
         } else {
@@ -61,9 +57,7 @@ public class ComponentSerializer implements TypeSerializer<Component> {
             String message = this.serialize(obj);
             if (message.contains("<br>")) {
                 String[] striped = message.split("<br>");
-                node.setList(String.class, Arrays.stream(striped).filter((string) -> {
-                    return !string.isEmpty();
-                }).toList());
+                node.setList(String.class, Arrays.stream(striped).filter((string) -> !string.isEmpty()).toList());
             } else {
                 node.set(message);
             }

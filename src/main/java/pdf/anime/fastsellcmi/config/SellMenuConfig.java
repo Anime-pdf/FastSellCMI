@@ -41,34 +41,22 @@ public class SellMenuConfig {
 
         { // sell button
             ItemStack item = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
-            item.editMeta(itemMeta -> {
-                itemMeta.displayName(Component.text("SELL", NamedTextColor.GREEN));
-            });
-
+            item.editMeta(itemMeta -> itemMeta.displayName(Component.text("SELL", NamedTextColor.GREEN)));
             sellButtonItem = item;
         }
         { // cancel button
             ItemStack item = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-            item.editMeta(itemMeta -> {
-                itemMeta.displayName(Component.text("CANCEL", NamedTextColor.RED));
-            });
-
+            item.editMeta(itemMeta -> itemMeta.displayName(Component.text("CANCEL", NamedTextColor.RED)));
             cancelButtonItem = item;
         }
         { // price button
             ItemStack item = new ItemStack(Material.END_CRYSTAL);
-            item.editMeta(itemMeta -> {
-                itemMeta.displayName(Component.text("Sell for: ", NamedTextColor.BLUE).append(Component.text("{total}", NamedTextColor.RED)));
-            });
-
+            item.editMeta(itemMeta -> itemMeta.displayName(Component.text("Sell for: ", NamedTextColor.BLUE).append(Component.text("{total}", NamedTextColor.RED))));
             priceButtonItem = item;
         }
         { // wall button
             ItemStack item = new ItemStack(Material.PURPLE_STAINED_GLASS_PANE);
-            item.editMeta(itemMeta -> {
-                itemMeta.displayName(Component.text(" "));
-            });
-
+            item.editMeta(itemMeta -> itemMeta.displayName(Component.text(" ")));
             wallButtonItem = item;
         }
 

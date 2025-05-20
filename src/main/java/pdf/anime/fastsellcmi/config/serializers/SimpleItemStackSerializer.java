@@ -34,8 +34,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
 
         node = node.childrenMap().get(node.childrenMap().keySet().toArray()[0]);
         String simpleItemData = (String) node.key();
-        ItemStack item = null;
-        item = this.deserializeSimple(simpleItemData);
+        ItemStack item = this.deserializeSimple(simpleItemData);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.displayName(node.node("name").get(Component.class, Component.empty()));
@@ -49,16 +48,14 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             List<String> list;
             if (!node.node("item_flags").isNull()) {
                 list = node.node("item_flags").getList(String.class, new ArrayList<>());
-                list.forEach((attribute) -> {
-                    meta.addItemFlags(ItemFlag.valueOf(((String) attribute).toUpperCase()));
-                });
+                list.forEach((attribute) -> meta.addItemFlags(ItemFlag.valueOf(attribute.toUpperCase())));
             }
 
             list = node.node("enchantments").getList(String.class);
             boolean isEnchantedBook = this.isEnchantmentBook(item);
             if (list != null) {
                 list.forEach((s) -> {
-                    String[] striped = ((String) s).split(" ");
+                    String[] striped = s.split(" ");
                     Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(striped[0]));
                     if (enchantment == null) {
                         throw new RuntimeException(striped[0] + " this enchantment not exist");
@@ -115,9 +112,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 }
 
                 List<String> serializedItemFlag = new ArrayList<>();
-                meta.getItemFlags().forEach((itemFlag) -> {
-                    serializedItemFlag.add(itemFlag.name().toLowerCase());
-                });
+                meta.getItemFlags().forEach((itemFlag) -> serializedItemFlag.add(itemFlag.name().toLowerCase()));
                 if (!serializedItemFlag.isEmpty()) {
                     node.node("item_flags").setList(String.class, serializedItemFlag);
                 }
@@ -184,9 +179,7 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
                 if (!node.isNull()) {
                     if (node.node("base").get(String.class) != null) {
                         potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(node.node("base").get(String.class))));
-                        node.node("effects").getList(PotionEffect.class, new ArrayList<>()).forEach((effect) -> {
-                            potionMeta.addCustomEffect(effect, false);
-                        });
+                        node.node("effects").getList(PotionEffect.class, new ArrayList<>()).forEach((effect) -> potionMeta.addCustomEffect(effect, false));
                     }
                 }
             }
