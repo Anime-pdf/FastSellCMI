@@ -36,7 +36,7 @@ dependencies {
 
     // CMI
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly files('libs/CMI-API9.6.5.0.jar')
+    compileOnly files('libs/CMIAPI-9.7.4.1.jar')
 
     // Config
     implementation 'org.spongepowered:configurate-core:4.1.2'
