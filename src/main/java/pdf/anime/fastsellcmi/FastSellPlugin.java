@@ -9,9 +9,11 @@ import pdf.anime.fastsellcmi.listeners.FastSellMenuListener;
 import pdf.anime.fastsellcmi.services.MenuService;
 import pdf.anime.fastsellcmi.services.PDCService;
 import pdf.anime.fastsellcmi.utils.BukkitRunner;
+import pdf.anime.fastsellcmi.bstats.Metrics;
 
 @Getter
 public class FastSellPlugin extends JavaPlugin {
+    private Metrics metrics;
 
     private ConfigContainer configContainer;
     private PaperCommandManager commandManager;
@@ -36,6 +38,8 @@ public class FastSellPlugin extends JavaPlugin {
         this.commandManager = new PaperCommandManager(this);
         this.commandManager.registerCommand(new FastSellCommand(this.configContainer, this.menuService));
 
+        this.metrics = new Metrics(this, 21511);
+
         getLogger().info("FastSellCMI enabled successfully!");
     }
 
@@ -44,6 +48,7 @@ public class FastSellPlugin extends JavaPlugin {
         if (this.commandManager != null) {
             this.commandManager.unregisterCommands();
         }
+        this.metrics.shutdown();
         getLogger().info("FastSellCMI disabled.");
     }
 }
