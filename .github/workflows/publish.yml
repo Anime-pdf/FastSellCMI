@@ -41,7 +41,14 @@ jobs:
         with:
           name: built-jars
           path: ./build
-      - name: Publish to Modrinth, GitHub.
+      - name: Debug stuff
+        run: |
+          ls -la
+          cd build
+          ls -la
+          cd libs
+          ls -la
+      - name: Publish to Modrinth, GitHub
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           files: |
@@ -52,7 +59,7 @@ jobs:
           github-token: ${{ secrets.CLASSIC_GITHUB_TOKEN }}
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Publish to Hangar.
+      - name: Publish to Hangar
         env:
           HANGAR_ID: ${{ vars.HANGAR_ID }}
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
