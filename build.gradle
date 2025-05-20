@@ -67,6 +67,10 @@ shadowJar {
     relocate 'dev.rollczi.litecommands', 'pdf.anime.fastsellcmi.libs.litecommands'
     relocate 'panda.std', 'pdf.anime.fastsellcmi.libs.panda.std'
     incrementBuildVersion()
+
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
 }
 
 test {
