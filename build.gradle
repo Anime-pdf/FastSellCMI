@@ -5,6 +5,7 @@ plugins {
 
 group 'pdf.anime.fastsellcmi'
 ext.projectVersion = '2.1.0'
+group = 'pdf.anime.fastsellcmi'
 
 def targetJavaVersion = 17
 java {
