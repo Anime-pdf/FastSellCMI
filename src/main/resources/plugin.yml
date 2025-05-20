@@ -4,8 +4,9 @@ version: '3.0.0'
 description: CMI extension that allows fast selling through configurable GUI
 load: POSTWORLD
 author: Animepdf
+contributors: [ gepron1x ]
 prefix: FastSell
-depend: [ CMILib, CMI, Vault ]
+depend: [ CMI, Vault ]
 api-version: 1.18
 permissions:
   fastsell.sell:
