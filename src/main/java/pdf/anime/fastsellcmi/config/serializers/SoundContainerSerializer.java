@@ -16,10 +16,22 @@ public class SoundContainerSerializer implements TypeSerializer<SoundContainer> 
     }
 
     public SoundContainer deserialize(@NotNull Type type, @NotNull ConfigurationNode node) {
+        String soundString = node.node("name").getString();
+        Sound sound;
+        if (soundString == null || soundString.isBlank()) {
+            return null;
+        }
+
+        try {
+            sound = Sound.valueOf(soundString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+
         return new SoundContainer(
-                Sound.valueOf(node.node("name").getString()),
-                node.node("volume").getInt(),
-                node.node("pitch").getInt()
+                sound,
+                node.node("volume").getInt(1),
+                node.node("pitch").getInt(0)
         );
     }
 

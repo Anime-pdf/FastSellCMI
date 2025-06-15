@@ -29,8 +29,16 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
     }
 
     public ItemStack deserialize(@NotNull Type type, ConfigurationNode node) throws SerializationException {
-        if (node.isNull() || node.isList()) return null;
-        if (!node.isMap()) return this.deserializeSimple(node.getString(""));
+        if (node.isNull() || node.isList()) {
+            return null;
+        }
+
+        if (!node.isMap()) {
+            String simpleItem = node.getString();
+            if (simpleItem == null || simpleItem.isBlank())
+                return null;
+            return this.deserializeSimple(simpleItem);
+        }
 
         node = node.childrenMap().get(node.childrenMap().keySet().toArray()[0]);
         String simpleItemData = (String) node.key();
@@ -260,8 +268,8 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
     }
 
     private String serializeSimple(ItemStack itemStack) {
-        String var10000 = itemStack.getType().name().toLowerCase();
-        return var10000 + " " + itemStack.getAmount();
+        String type = itemStack.getType().name().toLowerCase();
+        return type + " " + itemStack.getAmount();
     }
 
     private ItemStack deserializeSimple(String simpleItemSerialized) {
@@ -269,7 +277,17 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
         if (stripped.length != 2) {
             throw new RuntimeException("must be 2 parameters {material count}");
         } else {
-            return new ItemStack(Material.valueOf(stripped[0].toUpperCase()), Integer.parseInt(stripped[1]));
+            int amount = 1;
+            Material material = Material.getMaterial(stripped[0]);
+            if (material == null) {
+                return null;
+            }
+            try {
+                amount = Integer.parseInt(stripped[1]);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+            return new ItemStack(material, amount);
         }
     }
 
