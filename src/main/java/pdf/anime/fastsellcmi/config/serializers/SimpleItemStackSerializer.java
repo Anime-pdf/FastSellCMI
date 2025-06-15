@@ -35,13 +35,17 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
 
         if (!node.isMap()) {
             String simpleItem = node.getString();
-            if (simpleItem == null || simpleItem.isBlank())
-                return null;
+            if (simpleItem == null || simpleItem.isBlank()) {
+                simpleItem = "";
+            }
             return this.deserializeSimple(simpleItem);
         }
 
         node = node.childrenMap().get(node.childrenMap().keySet().toArray()[0]);
         String simpleItemData = (String) node.key();
+        if (simpleItemData == null || simpleItemData.isBlank()) {
+            simpleItemData = "";
+        }
         ItemStack item = this.deserializeSimple(simpleItemData);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -280,12 +284,11 @@ public class SimpleItemStackSerializer implements TypeSerializer<ItemStack> {
             int amount = 1;
             Material material = Material.getMaterial(stripped[0]);
             if (material == null) {
-                return null;
+                material = Material.AIR;
             }
             try {
                 amount = Integer.parseInt(stripped[1]);
-            } catch (NumberFormatException e) {
-                return null;
+            } catch (NumberFormatException ignored) {
             }
             return new ItemStack(material, amount);
         }
