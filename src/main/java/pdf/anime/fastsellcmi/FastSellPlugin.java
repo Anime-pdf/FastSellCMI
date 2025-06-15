@@ -48,7 +48,9 @@ public class FastSellPlugin extends JavaPlugin {
         if (this.commandManager != null) {
             this.commandManager.unregisterCommands();
         }
-        this.metrics.shutdown();
+        if(this.metrics != null) {
+            this.metrics.shutdown();
+        }
         getLogger().info("FastSellCMI disabled.");
     }
 }
