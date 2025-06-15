@@ -36,6 +36,9 @@ public class FastSellMenu implements InventoryHolder {
     @Getter
     @Setter
     private boolean sold = false;
+    @Getter
+    @Setter
+    private boolean transactionInProgress = false;
 
     FastSellMenu(ConfigContainer configContainer, PDCService pdcService) {
         this.configContainer = configContainer;
@@ -128,6 +131,15 @@ public class FastSellMenu implements InventoryHolder {
                 .filter(item -> {
                     WorthItem worth = CMI.getInstance().getWorthManager().getWorth(item);
                     return worth == null || worth.getSellPrice() <= 0;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<ItemStack> getSellableItems() {
+        return getItems().stream()
+                .filter(item -> {
+                    WorthItem worth = CMI.getInstance().getWorthManager().getWorth(item);
+                    return worth != null && worth.getSellPrice() > 0;
                 })
                 .collect(Collectors.toList());
     }

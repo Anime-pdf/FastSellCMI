@@ -15,6 +15,9 @@ import pdf.anime.fastsellcmi.utils.BukkitRunner;
 import pdf.anime.fastsellcmi.utils.PlaceholderUtils;
 import pdf.anime.fastsellcmi.utils.SoundContainer;
 
+import java.util.List;
+import java.util.Map;
+
 import static com.Zrips.CMI.Modules.Economy.Economy.format;
 
 public class FastSellMenuListener implements Listener {
@@ -43,26 +46,44 @@ public class FastSellMenuListener implements Listener {
         }
 
         event.setCancelled(true);
-
         Player player = (Player) event.getWhoClicked();
+
         switch (buttonType) {
-            case SellMenuConfig.WALL_BUTTON_TYPE:
-            case SellMenuConfig.PRICE_BUTTON_TYPE:
-                break;
             case SellMenuConfig.SELL_BUTTON_TYPE:
                 handleSell(player, menu);
                 break;
             case SellMenuConfig.CANCEL_BUTTON_TYPE:
-                handleCancel(player);
+                handleCancel(player, menu);
                 break;
         }
     }
 
     private void handleSell(Player player, FastSellMenu menu) {
-        double price = menu.getTotalPrice();
+        menu.setTransactionInProgress(true);
 
-        menu.getUnsellableItems().forEach(item -> player.getInventory().addItem(item));
-        menu.getItems().forEach(item -> menu.getInventory().removeItem(item));
+        double price = menu.getTotalPrice();
+        List<ItemStack> unsellableItems = menu.getUnsellableItems();
+        List<ItemStack> sellableItems = menu.getSellableItems();
+
+        menu.getInventory().removeItem(unsellableItems.toArray(new ItemStack[0]));
+        menu.getInventory().removeItem(sellableItems.toArray(new ItemStack[0]));
+
+        if (!unsellableItems.isEmpty()) {
+            Map<Integer, ItemStack> didNotFit = player.getInventory().addItem(unsellableItems.toArray(new ItemStack[0]));
+
+            if (!didNotFit.isEmpty()) {
+                SoundContainer inventoryFullSound = configContainer.getLanguageConfig().inventoryFullSound;
+                player.sendMessage(configContainer.getLanguageConfig().inventoryFullMessage);
+                player.playSound(player.getLocation(), inventoryFullSound.getSound(), inventoryFullSound.getVolume(), inventoryFullSound.getPitch());
+                for (ItemStack itemToDrop : didNotFit.values()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), itemToDrop);
+                }
+            }
+        }
+
+        if (price > 0) {
+            CMI.getInstance().getPlayerManager().getUser(player).deposit(price);
+        }
 
         menu.setSold(true);
         player.closeInventory();
@@ -87,25 +108,48 @@ public class FastSellMenuListener implements Listener {
         }
     }
 
-    private void handleCancel(Player player) {
+    private void handleCancel(Player player, FastSellMenu menu) {
+        menu.setSold(true);
+
+        returnItemsOnClose(player, menu);
         player.closeInventory();
+
+        SoundContainer cancelSound = configContainer.getLanguageConfig().getCancelSound();
+        player.sendMessage(configContainer.getLanguageConfig().getCancelMessage());
+        player.playSound(player.getLocation(), cancelSound.getSound(), cancelSound.getVolume(), cancelSound.getPitch());
     }
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
-        if (event.getInventory().getHolder() instanceof FastSellMenu menu && !menu.isSold()) {
-            Player player = (Player)event.getPlayer();
-            SoundContainer cancelSound = configContainer.getLanguageConfig().cancelSound;
-            player.sendMessage(configContainer.getLanguageConfig().cancelMessage);
-            player.playSound(player.getLocation(), cancelSound.getSound(), cancelSound.getVolume(), cancelSound.getPitch());
+        if (!(event.getInventory().getHolder() instanceof FastSellMenu menu)) {
+            return;
+        }
 
-            menu.getItems().forEach(item -> event.getPlayer().getInventory().addItem(item));
-            menu.getUnsellableItems().forEach(item -> {
-                // Ensure the item is still in the menu before trying to add it back, to avoid duplicating items if they were already moved by the player (if not cancelled).
-                if (menu.getInventory().contains(item)) {
-                    event.getPlayer().getInventory().addItem(item);
-                }
-            });
+        if (menu.isSold() || menu.isTransactionInProgress()) {
+            return;
+        }
+
+        Player player = (Player) event.getPlayer();
+        returnItemsOnClose(player, menu);
+
+        SoundContainer cancelSound = configContainer.getLanguageConfig().getCancelSound();
+        player.sendMessage(configContainer.getLanguageConfig().getCancelMessage());
+        player.playSound(player.getLocation(), cancelSound.getSound(), cancelSound.getVolume(), cancelSound.getPitch());
+    }
+
+    private void returnItemsOnClose(Player player, FastSellMenu menu) {
+        List<ItemStack> itemsToReturn = menu.getItems();
+        if (itemsToReturn.isEmpty()) {
+            return;
+        }
+
+        Map<Integer, ItemStack> didNotFit = player.getInventory().addItem(itemsToReturn.toArray(new ItemStack[0]));
+
+        if (!didNotFit.isEmpty()) {
+            player.sendMessage(configContainer.getLanguageConfig().inventoryFullMessage);
+            for (ItemStack itemToDrop : didNotFit.values()) {
+                player.getWorld().dropItemNaturally(player.getLocation(), itemToDrop);
+            }
         }
     }
 }

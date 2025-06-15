@@ -20,9 +20,13 @@ public class GeneralConfig {
     public Component noItemsSoldMessage = Component.text("No items could be sold.", NamedTextColor.YELLOW);
     public Component cancelMessage = Component.text("You canceled selling!", NamedTextColor.RED);
 
+    public Component inventoryFullMessage = Component.text("Some items didn't fit in your inventory and were dropped at your feet.", NamedTextColor.YELLOW);
+
     public SoundContainer sellSound = new SoundContainer(Sound.ENTITY_VILLAGER_TRADE);
     public SoundContainer noItemsSoldSound = new SoundContainer(Sound.ENTITY_VILLAGER_HURT);
     public SoundContainer cancelSound = new SoundContainer(Sound.ENTITY_VILLAGER_NO);
+
+    public SoundContainer inventoryFullSound = new SoundContainer(Sound.ENTITY_VILLAGER_DEATH);
 
     public GeneralConfig() {
     }
