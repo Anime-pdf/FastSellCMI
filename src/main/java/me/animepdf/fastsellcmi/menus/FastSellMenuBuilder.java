@@ -1,7 +1,7 @@
-package pdf.anime.fastsellcmi.menus;
+package me.animepdf.fastsellcmi.menus;
 
-import pdf.anime.fastsellcmi.config.ConfigContainer;
-import pdf.anime.fastsellcmi.services.PDCService;
+import me.animepdf.fastsellcmi.config.ConfigContainer;
+import me.animepdf.fastsellcmi.services.PDCService;
 
 public class FastSellMenuBuilder {
     private ConfigContainer configContainer;

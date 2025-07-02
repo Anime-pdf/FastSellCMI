@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.services;
+package me.animepdf.fastsellcmi.services;
 
 import lombok.Getter;
 import org.bukkit.Material;

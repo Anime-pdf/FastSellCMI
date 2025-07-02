@@ -1,11 +1,11 @@
-package pdf.anime.fastsellcmi.commands;
+package me.animepdf.fastsellcmi.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pdf.anime.fastsellcmi.config.ConfigContainer;
-import pdf.anime.fastsellcmi.services.MenuService;
+import me.animepdf.fastsellcmi.config.ConfigContainer;
+import me.animepdf.fastsellcmi.services.MenuService;
 
 @CommandAlias("fastsell|fsell")
 public class FastSellCommand extends BaseCommand {

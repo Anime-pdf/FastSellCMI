@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.config.serializers;
+package me.animepdf.fastsellcmi.config.serializers;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;

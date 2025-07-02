@@ -1,4 +1,4 @@
-main: pdf.anime.fastsellcmi.FastSellPlugin
+main: me.animepdf.fastsellcmi.FastSellPlugin
 name: FastSellCMI
 version: '3.0.0'
 description: CMI extension that allows fast selling through configurable GUI

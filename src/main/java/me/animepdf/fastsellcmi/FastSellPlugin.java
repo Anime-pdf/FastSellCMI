@@ -1,15 +1,15 @@
-package pdf.anime.fastsellcmi;
+package me.animepdf.fastsellcmi;
 
 import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
-import pdf.anime.fastsellcmi.commands.FastSellCommand;
-import pdf.anime.fastsellcmi.config.ConfigContainer;
-import pdf.anime.fastsellcmi.listeners.FastSellMenuListener;
-import pdf.anime.fastsellcmi.services.MenuService;
-import pdf.anime.fastsellcmi.services.PDCService;
-import pdf.anime.fastsellcmi.utils.BukkitRunner;
-import pdf.anime.fastsellcmi.bstats.Metrics;
+import me.animepdf.fastsellcmi.commands.FastSellCommand;
+import me.animepdf.fastsellcmi.config.ConfigContainer;
+import me.animepdf.fastsellcmi.listeners.FastSellMenuListener;
+import me.animepdf.fastsellcmi.services.MenuService;
+import me.animepdf.fastsellcmi.services.PDCService;
+import me.animepdf.fastsellcmi.utils.BukkitRunner;
+import me.animepdf.fastsellcmi.bstats.Metrics;
 
 @Getter
 public class FastSellPlugin extends JavaPlugin {

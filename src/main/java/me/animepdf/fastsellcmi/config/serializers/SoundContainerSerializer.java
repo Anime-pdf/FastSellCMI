@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.config.serializers;
+package me.animepdf.fastsellcmi.config.serializers;
 
 import org.bukkit.Sound;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
-import pdf.anime.fastsellcmi.utils.SoundContainer;
+import me.animepdf.fastsellcmi.utils.SoundContainer;
 
 import java.lang.reflect.Type;
 

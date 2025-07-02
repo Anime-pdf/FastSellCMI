@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.config.serializers;
+package me.animepdf.fastsellcmi.config.serializers;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;

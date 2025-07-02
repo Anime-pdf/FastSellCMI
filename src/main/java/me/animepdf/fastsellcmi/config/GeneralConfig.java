@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.config;
+package me.animepdf.fastsellcmi.config;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import pdf.anime.fastsellcmi.utils.SoundContainer;
+import me.animepdf.fastsellcmi.utils.SoundContainer;
 
 @ConfigSerializable
 @Getter

@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.config.serializers;
+package me.animepdf.fastsellcmi.config.serializers;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;

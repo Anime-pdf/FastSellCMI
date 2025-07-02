@@ -1,9 +1,9 @@
-package pdf.anime.fastsellcmi.services;
+package me.animepdf.fastsellcmi.services;
 
 import org.bukkit.entity.Player;
-import pdf.anime.fastsellcmi.config.ConfigContainer;
-import pdf.anime.fastsellcmi.menus.FastSellMenu;
-import pdf.anime.fastsellcmi.menus.FastSellMenuBuilder;
+import me.animepdf.fastsellcmi.config.ConfigContainer;
+import me.animepdf.fastsellcmi.menus.FastSellMenu;
+import me.animepdf.fastsellcmi.menus.FastSellMenuBuilder;
 
 public class MenuService {
     private final ConfigContainer configContainer;

@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.utils;
+package me.animepdf.fastsellcmi.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;

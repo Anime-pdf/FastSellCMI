@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.utils;
+package me.animepdf.fastsellcmi.utils;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

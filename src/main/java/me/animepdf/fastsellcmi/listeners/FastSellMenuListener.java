@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.listeners;
+package me.animepdf.fastsellcmi.listeners;
 
 import com.Zrips.CMI.CMI;
 import net.kyori.adventure.text.Component;
@@ -7,13 +7,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
-import pdf.anime.fastsellcmi.config.ConfigContainer;
-import pdf.anime.fastsellcmi.config.SellMenuConfig;
-import pdf.anime.fastsellcmi.menus.FastSellMenu;
-import pdf.anime.fastsellcmi.services.PDCService;
-import pdf.anime.fastsellcmi.utils.BukkitRunner;
-import pdf.anime.fastsellcmi.utils.PlaceholderUtils;
-import pdf.anime.fastsellcmi.utils.SoundContainer;
+import me.animepdf.fastsellcmi.config.ConfigContainer;
+import me.animepdf.fastsellcmi.config.SellMenuConfig;
+import me.animepdf.fastsellcmi.menus.FastSellMenu;
+import me.animepdf.fastsellcmi.services.PDCService;
+import me.animepdf.fastsellcmi.utils.BukkitRunner;
+import me.animepdf.fastsellcmi.utils.PlaceholderUtils;
+import me.animepdf.fastsellcmi.utils.SoundContainer;
 
 import java.util.List;
 import java.util.Map;

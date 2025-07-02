@@ -1,6 +1,7 @@
-package pdf.anime.fastsellcmi.config;
+package me.animepdf.fastsellcmi.config;
 
 import lombok.Getter;
+import me.animepdf.fastsellcmi.config.serializers.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -12,8 +13,7 @@ import org.spongepowered.configurate.objectmapping.ObjectMapper;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-import pdf.anime.fastsellcmi.config.serializers.*;
-import pdf.anime.fastsellcmi.utils.SoundContainer;
+import me.animepdf.fastsellcmi.utils.SoundContainer;
 
 import java.io.File;
 import java.nio.file.Files;

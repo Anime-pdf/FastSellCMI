@@ -12,7 +12,7 @@
  *
  * Violations will result in a ban of your plugin and account from bStats.
  */
-package pdf.anime.fastsellcmi.bstats;
+package me.animepdf.fastsellcmi.bstats;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

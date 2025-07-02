@@ -1,4 +1,4 @@
-package pdf.anime.fastsellcmi.menus;
+package me.animepdf.fastsellcmi.menus;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Worth.WorthItem;
@@ -14,10 +14,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import pdf.anime.fastsellcmi.config.ConfigContainer;
-import pdf.anime.fastsellcmi.config.SellMenuConfig;
-import pdf.anime.fastsellcmi.services.PDCService;
-import pdf.anime.fastsellcmi.utils.PlaceholderUtils;
+import me.animepdf.fastsellcmi.config.ConfigContainer;
+import me.animepdf.fastsellcmi.config.SellMenuConfig;
+import me.animepdf.fastsellcmi.services.PDCService;
+import me.animepdf.fastsellcmi.utils.PlaceholderUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
